@@ -1,134 +1,139 @@
 # P&E Premium Flooring Website
 
 ## Overview
+A professional single-page website for P&E Premium Flooring, a Milwaukee Metro area flooring contractor specializing in LVP, tile, hardwood, and countertop installation.
 
-P&E Premium Flooring is a single-page marketing website designed to establish credibility and generate leads for a Milwaukee Metro-based flooring installation company. The site showcases services including LVP, tile, hardwood flooring, and countertop installation, with a primary focus on converting visitors into phone calls and contact form submissions. The application emphasizes mobile responsiveness, visual appeal through a gallery of completed work, and clear calls-to-action throughout the user journey.
+## Purpose
+- Establish credibility and professional online presence
+- Generate leads through calls and contact form submissions
+- Showcase 10+ years of experience and recent project work
+- Target construction companies and homeowners in Milwaukee Metro
 
-## User Preferences
+## Current State
+Production-ready single-page application with:
+- Beautiful hero section with professional imagery
+- About section highlighting 10+ years experience and key services
+- Services grid featuring all 5 service offerings
+- Gallery showcasing 12 recent project images
+- Working contact form with validation and submission
+- Mobile-responsive design with floating call button
+- SEO-optimized with proper meta tags and Open Graph
 
-Preferred communication style: Simple, everyday language.
+## Recent Changes (October 13, 2025)
+- Initial implementation of complete website
+- Contact form backend with in-memory storage
+- Professional design following flooring industry standards
+- Responsive design tested on mobile, tablet, and desktop
+- Component refactoring to use proper Shadcn primitives
 
-## System Architecture
+## Project Architecture
 
-### Frontend Architecture
+### Frontend
+- **Framework**: React with Vite
+- **Routing**: Wouter (single route: "/")
+- **Styling**: Tailwind CSS with Shadcn UI components
+- **Typography**: Montserrat (headings) and Open Sans (body)
+- **Color Palette**: 
+  - Deep Navy (220 45% 25%) - Primary brand color
+  - Amber/Gold (35 85% 50%) - CTA buttons and accents
+  - Warm Gray (30 8% 35%) - Secondary text
 
-**Framework**: React 18+ with TypeScript, using Vite as the build tool and development server.
+### Backend
+- **Server**: Express.js
+- **Storage**: In-memory (MemStorage)
+- **Validation**: Zod schemas
+- **API Endpoints**:
+  - POST /api/contact - Submit contact form
+  - GET /api/contact - Retrieve submissions (admin use)
 
-**Routing**: Wouter for client-side routing (lightweight alternative to React Router). The application currently implements a single-page design with smooth scrolling between sections.
+### Data Model
+```typescript
+ContactSubmission {
+  id: string (UUID)
+  name: string (min 2 chars)
+  phone: string (min 10 chars)
+  email: string (valid email)
+  projectType: string (min 5 chars)
+  location: string (min 3 chars)
+  createdAt: Date
+}
+```
 
-**UI Component System**: Shadcn/ui components built on Radix UI primitives. This provides accessible, customizable components that follow a consistent design system. Components are located in `client/src/components/ui/` and include forms, buttons, cards, dialogs, and navigation elements.
+## Key Features
 
-**Styling**: Tailwind CSS with custom design tokens defined in CSS variables. The design follows a "New York" style variant from Shadcn with custom color palette including:
-- Deep Navy Blue (primary brand color)
-- Warm Gray (secondary)
-- Amber/Gold accents
-- Design guidelines reference professional home services sites like Houzz and Angi
+### Contact Information
+- **Phone**: (414) 275-1889 (click-to-call throughout)
+- **Email**: Pepremiumflooring@gmail.com (click-to-email)
+- **Service Area**: Milwaukee Metro Area
+- **Facebook**: Link to company Facebook page
 
-**Typography**: Google Fonts integration using Montserrat for headings and Open Sans for body text, loaded via CDN in the HTML head.
+### Services Offered
+1. Luxury Vinyl Plank (LVP) installation
+2. Tile flooring installation
+3. Hardwood flooring installation
+4. Countertop installation
+5. Bathroom and kitchen tile installation
 
-**State Management**: TanStack Query (React Query) for server state management. Local component state managed with React hooks.
+### User Experience
+- Smooth scroll navigation to sections
+- Mobile floating call button (< 768px viewports)
+- Form validation with helpful error messages
+- Success/error toast notifications
+- Gallery hover effects
+- Responsive across all devices
 
-**Form Handling**: React Hook Form with Zod validation for type-safe form submissions. The contact form validates all fields client-side before submission.
+## SEO Keywords
+Milwaukee Flooring Contractor, Tile Installation Milwaukee, Hardwood Floor Installation, LVP Flooring Expert, Kitchen Tile Installation, Bathroom Remodeling Milwaukee, Countertop Installation, Affordable Flooring Milwaukee, Professional Floor Installers
 
-### Backend Architecture
+## Future Enhancements
+1. **Persistence**: Migrate from in-memory to PostgreSQL database
+2. **Facebook Integration**: Dynamic photo feed from Facebook album
+3. **Google Reviews**: Embed customer testimonials and ratings
+4. **Email Notifications**: Send email alerts on form submissions
+5. **CRM Integration**: Connect to customer management system
+6. **Analytics**: Track CTA clicks and conversion metrics
+7. **Before/After Sliders**: Interactive project showcases
 
-**Server Framework**: Express.js running on Node.js with TypeScript support via tsx in development.
+## Technical Stack
+- **Languages**: TypeScript, HTML, CSS
+- **Frontend**: React, Wouter, TanStack Query, React Hook Form
+- **Backend**: Express, Drizzle ORM schemas, Zod
+- **UI Components**: Shadcn UI, Lucide Icons
+- **Styling**: Tailwind CSS with custom design system
+- **Build Tool**: Vite
 
-**API Design**: RESTful API endpoints under `/api` prefix:
-- `POST /api/contact` - Submit contact form
-- `GET /api/contact` - Retrieve contact submissions (for admin purposes)
+## Project Structure
+```
+client/
+  src/
+    components/
+      Header.tsx - Sticky header with logo, phone, CTA
+      Hero.tsx - Full-width hero with background image
+      About.tsx - Experience and stats section
+      Services.tsx - 5 service cards grid
+      Gallery.tsx - 12 project images
+      Contact.tsx - Form and contact info
+      Footer.tsx - Links and social media
+      MobileCallButton.tsx - Floating mobile CTA
+    pages/
+      home.tsx - Main single-page layout
+      not-found.tsx - 404 page
+server/
+  routes.ts - API endpoints
+  storage.ts - In-memory data storage
+shared/
+  schema.ts - TypeScript types and Zod validation
+```
 
-**Validation**: Zod schemas shared between client and server via the `shared/` directory, ensuring type safety across the full stack.
+## Running the Application
+- **Development**: `npm run dev` (port 5000)
+- **Workflow**: "Start application" is configured to run automatically
 
-**Development Server**: Custom Vite middleware integration for HMR (Hot Module Replacement) in development. Production serves pre-built static assets from `dist/public`.
-
-**Build Process**: 
-- Frontend: Vite builds React application to `dist/public`
-- Backend: esbuild bundles server code to `dist/index.js` as ESM
-
-### Data Storage
-
-**Current Implementation**: In-memory storage using a Map-based implementation (`MemStorage` class). Contact submissions are stored temporarily in application memory.
-
-**Database Schema**: Drizzle ORM schema defined for PostgreSQL in `shared/schema.ts` with a `contact_submissions` table containing:
-- id (UUID primary key)
-- name, phone, email, projectType, location (text fields)
-- createdAt (timestamp)
-
-**Migration Path**: The application is architected to swap the `MemStorage` implementation for a PostgreSQL-backed implementation using Drizzle ORM. The interface (`IStorage`) is already defined to support this transition.
-
-**Database Configuration**: Drizzle Kit configured to use PostgreSQL dialect with migrations output to `./migrations` directory. Expects `DATABASE_URL` environment variable for connection.
-
-### Design System & Theming
-
-**CSS Architecture**: CSS custom properties for theme values with support for light/dark modes. Uses HSL color values with alpha channel support for dynamic opacity.
-
-**Responsive Design**: Mobile-first approach with breakpoints:
-- Mobile: < 768px
-- Tablet/Desktop: ≥ 768px (md breakpoint)
-- Large screens: ≥ 1024px (lg breakpoint)
-
-**Interactive Elements**: 
-- Hover/active states using elevation classes (`hover-elevate`, `active-elevate-2`)
-- Smooth scrolling navigation between sections
-- Sticky header with background blur on scroll
-- Fixed mobile call button for quick access
-
-## External Dependencies
-
-### Third-Party Services
-
-**Neon Database**: PostgreSQL-compatible serverless database provider. The application uses `@neondatabase/serverless` driver for database connectivity. Connection configured via `DATABASE_URL` environment variable.
-
-**Facebook Integration**: Gallery images and social proof sourced from the business's Facebook page. The site includes links to the Facebook page for social engagement but doesn't implement Facebook SDK or API integration - it's reference-only.
-
-### UI Component Libraries
-
-**Radix UI**: Comprehensive set of accessible, unstyled React components serving as primitives for the custom UI system. Includes components for dialogs, dropdowns, popovers, tooltips, forms, and more.
-
-**Shadcn/ui**: Component architecture pattern using Radix UI as foundation with Tailwind CSS styling. Components are copied into the project rather than imported as dependencies, allowing full customization.
-
-### Form & Validation
-
-**React Hook Form**: Form state management and validation orchestration with minimal re-renders.
-
-**Zod**: TypeScript-first schema validation library. Schemas in `shared/schema.ts` are used for:
-- Runtime validation of API inputs
-- TypeScript type inference
-- Client-side form validation via `@hookform/resolvers/zod`
-
-**Drizzle-Zod**: Integration between Drizzle ORM and Zod, automatically generating Zod schemas from database table definitions.
-
-### Utility Libraries
-
-**clsx & tailwind-merge**: Class name composition utilities combined in the `cn()` helper function for conditional Tailwind classes.
-
-**date-fns**: Date manipulation and formatting library.
-
-**class-variance-authority**: Type-safe component variant API for creating component variations with Tailwind classes.
-
-### Build & Development Tools
-
-**Vite**: Fast frontend build tool and dev server with HMR support.
-
-**esbuild**: Fast JavaScript bundler used for server-side code compilation.
-
-**TypeScript**: Type safety across frontend, backend, and shared code.
-
-**tsx**: TypeScript execution engine for running server code in development without pre-compilation.
-
-### Development-Only Dependencies
-
-**@replit/vite-plugin-runtime-error-modal**: Shows runtime errors in an overlay during development.
-
-**@replit/vite-plugin-cartographer**: Replit-specific development tooling.
-
-**@replit/vite-plugin-dev-banner**: Development environment banner.
-
-### Assets Management
-
-**Static Images**: Stock photography for gallery stored in `attached_assets/stock_images/` directory. Images are imported directly in components using Vite's asset handling.
-
-### Session Management
-
-**connect-pg-simple**: PostgreSQL session store for Express sessions (configured but may not be actively used in current implementation given the stateless API design).
+## Design Guidelines
+See `design_guidelines.md` for comprehensive design system documentation including:
+- Color palette and usage
+- Typography scale and fonts
+- Component spacing and layout
+- Button and card styling
+- Responsive breakpoints
+- Trust signals and credibility elements
