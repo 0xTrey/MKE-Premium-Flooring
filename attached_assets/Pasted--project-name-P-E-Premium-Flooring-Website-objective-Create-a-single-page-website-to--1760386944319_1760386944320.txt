@@ -1,0 +1,120 @@
+{
+  "project_name": "P&E Premium Flooring Website",
+  "objective": "Create a single-page website to establish credibility and generate leads for P&E Premium Flooring through calls and contact form submissions.",
+  "target_audience": [
+    "Construction companies",
+    "Homeowners in the Milwaukee Metro area"
+  ],
+  "services": [
+    "Luxury Vinyl Plank (LVP) installation",
+    "Tile flooring installation",
+    "Hardwood flooring installation",
+    "Countertop installation",
+    "Bathroom and kitchen tile installation"
+  ],
+  "unique_selling_points": [
+    "10+ years of experience",
+    "Competitive pricing",
+    "Fast project turnaround",
+    "High-quality craftsmanship"
+  ],
+  "branding": {
+    "source": "Facebook page",
+    "style": "Professional, clean, trustworthy",
+    "colors": "Match existing Facebook branding"
+  },
+  "content_and_media": {
+    "photo_source": "Facebook",
+    "gallery_feature": "Embed or pull recent photos from Facebook album",
+    "social_cta": "Follow us on Facebook"
+  },
+  "call_to_action": {
+    "primary": "Call for a Free Estimate",
+    "secondary": "Contact Us (future form integration)"
+  },
+  "contact_information": {
+    "phone": "(414) 275-1889",
+    "email": "Pepremiumflooring@gmail.com",
+    "form_fields": [
+      "Name",
+      "Phone",
+      "Email",
+      "Project Type & Overview",
+      "Location"
+    ]
+  },
+  "functionality": {
+    "site_type": "Single-page static site",
+    "responsive": true,
+    "tap_to_call": true,
+    "click_to_email": true,
+    "seo_optimized": true,
+    "future_integrations": [
+      "Facebook photo feed",
+      "Google Reviews embed",
+      "Contact form with Formspree or Netlify"
+    ]
+  },
+  "seo_keywords": [
+    "Premium Flooring",
+    "Milwaukee Flooring Contractor",
+    "Tile Installation Milwaukee",
+    "Hardwood Floor Installation",
+    "LVP Flooring Expert",
+    "Kitchen Tile Installation",
+    "Bathroom Remodeling Milwaukee",
+    "Countertop Installation",
+    "Affordable Flooring Milwaukee",
+    "Professional Floor Installers"
+  ],
+  "page_structure": {
+    "header": {
+      "elements": [
+        "Logo",
+        "Phone number (click-to-call)",
+        "CTA button: Call for a Free Estimate"
+      ]
+    },
+    "hero_section": {
+      "headline": "Quality Flooring. Affordable Prices.",
+      "subtext": "Serving Milwaukee Metro with premium flooring and tile installation.",
+      "cta_button": "Call for a Free Estimate"
+    },
+    "about_section": {
+      "description": "Over 10 years of experience delivering beautiful, durable flooring for homes and businesses.",
+      "highlights": [
+        "LVP, tile, and hardwood installation",
+        "Bathroom and kitchen tile work",
+        "Countertops"
+      ]
+    },
+    "gallery_section": {
+      "description": "Recent work from our Facebook gallery",
+      "integration": "Dynamic photo pull from Facebook album"
+    },
+    "contact_section": {
+      "cta": "Call for a Free Estimate",
+      "details": {
+        "phone": "(414) 275-1889",
+        "email": "Pepremiumflooring@gmail.com"
+      },
+      "future_contact_form": true
+    },
+    "footer": {
+      "elements": [
+        "Copyright notice",
+        "Quick links",
+        "Social media icons"
+      ]
+    }
+  },
+  "technical": {
+    "build_type": "Static HTML/CSS/JS",
+    "hosting": "Replit (optional Netlify alternative)",
+    "future_integrations": [
+      "Google Reviews",
+      "Form submission handling",
+      "Dynamic gallery"
+    ]
+  }
+}
