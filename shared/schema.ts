@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, timestamp, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -10,6 +10,15 @@ export const contactSubmissions = pgTable("contact_submissions", {
   email: text("email").notNull(),
   projectType: text("project_type").notNull(),
   location: text("location").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const photos = pgTable("photos", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  filename: text("filename").notNull(),
+  category: text("category").notNull(),
+  description: text("description").notNull(),
+  displayOrder: integer("display_order").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -29,3 +38,11 @@ export const insertContactSubmissionSchema = createInsertSchema(contactSubmissio
 
 export type InsertContactSubmission = z.infer<typeof insertContactSubmissionSchema>;
 export type ContactSubmission = typeof contactSubmissions.$inferSelect;
+
+export const insertPhotoSchema = createInsertSchema(photos).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertPhoto = z.infer<typeof insertPhotoSchema>;
+export type Photo = typeof photos.$inferSelect;

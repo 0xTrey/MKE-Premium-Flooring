@@ -1,10 +1,12 @@
-import { contactSubmissions, type ContactSubmission, type InsertContactSubmission } from "@shared/schema";
+import { contactSubmissions, type ContactSubmission, type InsertContactSubmission, photos, type Photo, type InsertPhoto } from "@shared/schema";
 import { db } from "./db";
-import { desc } from "drizzle-orm";
+import { desc, asc } from "drizzle-orm";
 
 export interface IStorage {
   createContactSubmission(submission: InsertContactSubmission): Promise<ContactSubmission>;
   getContactSubmissions(): Promise<ContactSubmission[]>;
+  getPhotos(): Promise<Photo[]>;
+  createPhoto(photo: InsertPhoto): Promise<Photo>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -23,6 +25,21 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(contactSubmissions)
       .orderBy(desc(contactSubmissions.createdAt));
+  }
+
+  async getPhotos(): Promise<Photo[]> {
+    return await db
+      .select()
+      .from(photos)
+      .orderBy(asc(photos.displayOrder));
+  }
+
+  async createPhoto(insertPhoto: InsertPhoto): Promise<Photo> {
+    const [photo] = await db
+      .insert(photos)
+      .values(insertPhoto)
+      .returning();
+    return photo;
   }
 }
 

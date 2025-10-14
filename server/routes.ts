@@ -48,6 +48,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/photos", async (req, res) => {
+    try {
+      const allPhotos = await storage.getPhotos();
+      res.json({
+        success: true,
+        data: allPhotos,
+      });
+    } catch (error) {
+      console.error("Error fetching photos:", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
