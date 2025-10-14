@@ -13,18 +13,18 @@ A professional single-page website for P&E Premium Flooring, a Milwaukee Metro a
 Production-ready single-page application with:
 - Beautiful hero section with professional imagery
 - About section highlighting 10+ years experience and key services
-- Services grid featuring all 5 service offerings
+- Services grid with expandable pricing details and service specifications
+- Before/After section with 3 interactive image comparison sliders
 - Gallery showcasing 12 recent project images
-- Working contact form with validation and submission
+- Working contact form with PostgreSQL persistence
 - Mobile-responsive design with floating call button
 - SEO-optimized with proper meta tags and Open Graph
 
-## Recent Changes (October 13, 2025)
-- Initial implementation of complete website
-- Contact form backend with in-memory storage
-- Professional design following flooring industry standards
-- Responsive design tested on mobile, tablet, and desktop
-- Component refactoring to use proper Shadcn primitives
+## Recent Changes (October 14, 2025)
+- **Database Persistence**: Migrated from in-memory to PostgreSQL storage for contact submissions
+- **Service Pricing Details**: Added expandable accordion with detailed service information and pricing guides for all 5 services
+- **Before/After Sliders**: Implemented interactive image comparison sliders using custom clip-path solution for project showcases
+- All features tested and architect-approved
 
 ## Project Architecture
 
@@ -40,10 +40,11 @@ Production-ready single-page application with:
 
 ### Backend
 - **Server**: Express.js
-- **Storage**: In-memory (MemStorage)
+- **Database**: PostgreSQL (Neon) via Drizzle ORM
+- **Storage**: DatabaseStorage implementation
 - **Validation**: Zod schemas
 - **API Endpoints**:
-  - POST /api/contact - Submit contact form
+  - POST /api/contact - Submit contact form (persists to database)
   - GET /api/contact - Retrieve submissions (admin use)
 
 ### Data Model
@@ -85,14 +86,17 @@ ContactSubmission {
 ## SEO Keywords
 Milwaukee Flooring Contractor, Tile Installation Milwaukee, Hardwood Floor Installation, LVP Flooring Expert, Kitchen Tile Installation, Bathroom Remodeling Milwaukee, Countertop Installation, Affordable Flooring Milwaukee, Professional Floor Installers
 
+## Completed Enhancements
+1. ✅ **Database Persistence**: Contact submissions now saved to PostgreSQL
+2. ✅ **Service Pricing**: Expandable accordion with detailed pricing guides
+3. ✅ **Before/After Sliders**: Interactive image comparison showcases
+
 ## Future Enhancements
-1. **Persistence**: Migrate from in-memory to PostgreSQL database
-2. **Facebook Integration**: Dynamic photo feed from Facebook album
-3. **Google Reviews**: Embed customer testimonials and ratings
-4. **Email Notifications**: Send email alerts on form submissions
-5. **CRM Integration**: Connect to customer management system
-6. **Analytics**: Track CTA clicks and conversion metrics
-7. **Before/After Sliders**: Interactive project showcases
+1. **Facebook Integration**: Dynamic photo feed from Facebook album (requires API credentials)
+2. **Google Reviews**: Embed customer testimonials and ratings (requires Google API setup)
+3. **Email Notifications**: Send email alerts on form submissions (requires email service)
+4. **CRM Integration**: Connect to customer management system
+5. **Analytics**: Track CTA clicks and conversion metrics
 
 ## Technical Stack
 - **Languages**: TypeScript, HTML, CSS
@@ -110,19 +114,21 @@ client/
       Header.tsx - Sticky header with logo, phone, CTA
       Hero.tsx - Full-width hero with background image
       About.tsx - Experience and stats section
-      Services.tsx - 5 service cards grid
+      Services.tsx - Service cards with expandable pricing accordions
+      BeforeAfter.tsx - Interactive before/after comparison sliders
       Gallery.tsx - 12 project images
-      Contact.tsx - Form and contact info
+      Contact.tsx - Form with validation and database persistence
       Footer.tsx - Links and social media
       MobileCallButton.tsx - Floating mobile CTA
     pages/
-      home.tsx - Main single-page layout
+      home.tsx - Main single-page layout with all sections
       not-found.tsx - 404 page
 server/
+  db.ts - PostgreSQL database connection (Neon + Drizzle)
   routes.ts - API endpoints
-  storage.ts - In-memory data storage
+  storage.ts - DatabaseStorage implementation
 shared/
-  schema.ts - TypeScript types and Zod validation
+  schema.ts - Drizzle schema, TypeScript types, Zod validation
 ```
 
 ## Running the Application
