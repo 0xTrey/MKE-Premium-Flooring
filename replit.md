@@ -15,7 +15,7 @@ Production-ready single-page application with:
 - About section highlighting 10+ years experience and key services
 - Services grid with expandable pricing details and service specifications
 - Before/After section with 3 interactive image comparison sliders
-- Gallery showcasing 12 recent project images
+- Database-driven gallery with 19 real project photos (8 at a time with carousel)
 - Working contact form with PostgreSQL persistence
 - Mobile-responsive design with floating call button
 - SEO-optimized with proper meta tags and Open Graph
@@ -25,6 +25,8 @@ Production-ready single-page application with:
 - **Service Pricing Details**: Added expandable accordion with detailed service information and pricing guides for all 5 services
 - **Before/After Sliders**: Implemented interactive image comparison sliders using custom clip-path solution for project showcases
 - **Real Project Photos**: Updated bathroom tile installation slider with actual project before/after photos
+- **Database-Driven Gallery**: Replaced all stock images with 19 real project photos stored in PostgreSQL
+- **Gallery Carousel**: Implemented 8-photo carousel with "See More" button that rotates through all photos
 - **Facebook URL**: Updated to actual company profile (https://www.facebook.com/profile.php?id=100092361378518)
 - All features tested and architect-approved
 
@@ -48,6 +50,7 @@ Production-ready single-page application with:
 - **API Endpoints**:
   - POST /api/contact - Submit contact form (persists to database)
   - GET /api/contact - Retrieve submissions (admin use)
+  - GET /api/photos - Fetch all gallery photos ordered by display order
 
 ### Data Model
 ```typescript
@@ -58,6 +61,15 @@ ContactSubmission {
   email: string (valid email)
   projectType: string (min 5 chars)
   location: string (min 3 chars)
+  createdAt: Date
+}
+
+Photo {
+  id: string (UUID)
+  filename: string
+  category: string
+  description: string
+  displayOrder: integer
   createdAt: Date
 }
 ```
@@ -82,7 +94,10 @@ ContactSubmission {
 - Mobile floating call button (< 768px viewports)
 - Form validation with helpful error messages
 - Success/error toast notifications
-- Gallery hover effects
+- Gallery carousel with 8 photos at a time
+- "See More" button rotates through all 19 project photos
+- Photo count indicator shows current position (e.g., "Showing 1-8 of 19")
+- Gallery hover effects with category labels
 - Responsive across all devices
 
 ## SEO Keywords
@@ -92,6 +107,7 @@ Milwaukee Flooring Contractor, Tile Installation Milwaukee, Hardwood Floor Insta
 1. ✅ **Database Persistence**: Contact submissions now saved to PostgreSQL
 2. ✅ **Service Pricing**: Expandable accordion with detailed pricing guides
 3. ✅ **Before/After Sliders**: Interactive image comparison showcases
+4. ✅ **Database-Driven Gallery**: 19 real project photos with carousel functionality
 
 ## Future Enhancements
 1. **Facebook Integration**: Dynamic photo feed from Facebook album (requires API credentials)
