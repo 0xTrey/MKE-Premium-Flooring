@@ -15,7 +15,7 @@ Production-ready single-page application with:
 - About section highlighting 10+ years experience and key services
 - Services grid with expandable pricing details and service specifications
 - Before/After section with 3 interactive image comparison sliders
-- Database-driven gallery with 19 real project photos (8 at a time with carousel)
+- Database-driven gallery with 27 real project photos (8 at a time with carousel)
 - Working contact form with PostgreSQL persistence
 - Mobile-responsive design with floating call button
 - SEO-optimized with proper meta tags and Open Graph
@@ -25,8 +25,8 @@ Production-ready single-page application with:
 - **Service Pricing Details**: Added expandable accordion with detailed service information and pricing guides for all 5 services
 - **Before/After Sliders**: Implemented interactive image comparison sliders using custom clip-path solution for project showcases
 - **Real Project Photos**: Updated bathroom tile installation slider with actual project before/after photos
-- **Database-Driven Gallery**: Replaced all stock images with 19 real project photos stored in PostgreSQL
-- **Gallery Carousel**: Implemented 8-photo carousel with "See More" button that rotates through all photos
+- **Database-Driven Gallery**: Replaced all stock images with 27 real project photos stored in PostgreSQL
+- **Gallery Carousel**: Implemented 8-photo carousel with "See More" button that rotates through all photos (4 pages total)
 - **Facebook URL**: Updated to actual company profile (https://www.facebook.com/profile.php?id=100092361378518)
 - All features tested and architect-approved
 
@@ -95,8 +95,8 @@ Photo {
 - Form validation with helpful error messages
 - Success/error toast notifications
 - Gallery carousel with 8 photos at a time
-- "See More" button rotates through all 19 project photos
-- Photo count indicator shows current position (e.g., "Showing 1-8 of 19")
+- "See More" button rotates through all 27 project photos
+- Photo count indicator shows current position (e.g., "Showing 1-8 of 27")
 - Gallery hover effects with category labels
 - Responsive across all devices
 
