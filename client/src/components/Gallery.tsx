@@ -64,7 +64,7 @@ export function Gallery() {
           <p className="text-primary-foreground/80 text-lg">
             Follow us on{" "}
             <a
-              href="https://www.facebook.com/pepremiumflooring"
+              href="https://www.facebook.com/profile.php?id=100092361378518"
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold underline hover:text-ring transition-colors"

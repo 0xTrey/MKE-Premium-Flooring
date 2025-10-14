@@ -22,7 +22,7 @@ export function Footer() {
               Quality flooring installation serving Milwaukee Metro for over 10 years.
             </p>
             <a
-              href="https://www.facebook.com/pepremiumflooring"
+              href="https://www.facebook.com/profile.php?id=100092361378518"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-primary-foreground hover:text-ring transition-colors"
