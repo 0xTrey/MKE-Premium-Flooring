@@ -4,8 +4,8 @@ import before1 from "@assets/stock_images/before_renovation_ol_357f4b0b.jpg";
 import after1 from "@assets/stock_images/after_renovation_new_6f8374d1.jpg";
 import before2 from "@assets/stock_images/before_renovation_ol_108d9cd5.jpg";
 import after2 from "@assets/stock_images/after_renovation_new_536f1226.jpg";
-import before3 from "@assets/stock_images/before_renovation_ol_192c1452.jpg";
-import after3 from "@assets/stock_images/after_renovation_new_b554a66d.jpg";
+import before3 from "@assets/Before 1_1760447377966.jpg";
+import after3 from "@assets/After 1_1760447377966.jpg";
 
 function CompareSlider({ before, after }: { before: string; after: string }) {
   const [sliderPosition, setSliderPosition] = useState(50);

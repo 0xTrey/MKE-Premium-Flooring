@@ -24,6 +24,8 @@ Production-ready single-page application with:
 - **Database Persistence**: Migrated from in-memory to PostgreSQL storage for contact submissions
 - **Service Pricing Details**: Added expandable accordion with detailed service information and pricing guides for all 5 services
 - **Before/After Sliders**: Implemented interactive image comparison sliders using custom clip-path solution for project showcases
+- **Real Project Photos**: Updated bathroom tile installation slider with actual project before/after photos
+- **Facebook URL**: Updated to actual company profile (https://www.facebook.com/profile.php?id=100092361378518)
 - All features tested and architect-approved
 
 ## Project Architecture
