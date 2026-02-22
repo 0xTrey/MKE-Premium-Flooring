@@ -1,9 +1,5 @@
 import { useState } from "react";
 import { MoveHorizontal } from "lucide-react";
-import before1 from "@assets/stock_images/before_renovation_ol_357f4b0b.jpg";
-import after1 from "@assets/stock_images/after_renovation_new_6f8374d1.jpg";
-import before2 from "@assets/stock_images/before_renovation_ol_108d9cd5.jpg";
-import after2 from "@assets/stock_images/after_renovation_new_536f1226.jpg";
 import before3 from "@assets/Before 1_1760447377966.jpg";
 import after3 from "@assets/After 1_1760447377966.jpg";
 
@@ -30,6 +26,7 @@ function CompareSlider({ before, after }: { before: string; after: string }) {
       onTouchStart={() => setIsDragging(true)}
       onTouchEnd={() => setIsDragging(false)}
       onTouchMove={handleMove}
+      data-testid="comparison-slider"
     >
       <img
         src={after}
@@ -48,14 +45,14 @@ function CompareSlider({ before, after }: { before: string; after: string }) {
         className="absolute top-0 bottom-0 w-1 bg-ring cursor-ew-resize"
         style={{ left: `${sliderPosition}%` }}
       >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-ring border-4 border-white shadow-lg flex items-center justify-center">
-          <MoveHorizontal className="w-5 h-5 text-white" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-ring border-4 border-white shadow-lg flex items-center justify-center">
+          <MoveHorizontal className="w-6 h-6 text-white" />
         </div>
       </div>
-      <div className="absolute bottom-4 left-4 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-medium">
+      <div className="absolute bottom-6 left-6 bg-black/70 text-white px-4 py-2 rounded-md text-base font-medium">
         Before
       </div>
-      <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-md text-sm font-medium">
+      <div className="absolute bottom-6 right-6 bg-black/70 text-white px-4 py-2 rounded-md text-base font-medium">
         After
       </div>
     </div>
@@ -63,58 +60,29 @@ function CompareSlider({ before, after }: { before: string; after: string }) {
 }
 
 export function BeforeAfter() {
-  const comparisons = [
-    {
-      before: before1,
-      after: after1,
-      title: "Kitchen Floor Transformation",
-      description: "Old worn flooring replaced with beautiful LVP",
-    },
-    {
-      before: before2,
-      after: after2,
-      title: "Living Room Hardwood Refinish",
-      description: "Restored and refinished hardwood brings new life",
-    },
-    {
-      before: before3,
-      after: after3,
-      title: "Bathroom Tile Installation",
-      description: "Modern tile installation with perfect finish",
-    },
-  ];
-
   return (
     <section className="py-16 lg:py-24 bg-muted/30" id="before-after">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-5xl font-heading font-semibold text-foreground mb-4">
             Before & After
           </h2>
           <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
-            See the dramatic transformations we've achieved for Milwaukee area homes.
+            See the dramatic transformation we achieved for this Milwaukee area bathroom.
             Drag the slider to compare.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {comparisons.map((comparison, index) => (
-            <div
-              key={index}
-              className="overflow-hidden rounded-lg border bg-card"
-              data-testid={`comparison-${index}`}
-            >
-              <CompareSlider before={comparison.before} after={comparison.after} />
-              <div className="p-4">
-                <h3 className="font-heading font-semibold text-foreground mb-1">
-                  {comparison.title}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {comparison.description}
-                </p>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-hidden rounded-lg border bg-card" data-testid="comparison-0">
+          <CompareSlider before={before3} after={after3} />
+          <div className="p-6">
+            <h3 className="text-xl font-heading font-semibold text-foreground mb-2">
+              Bathroom Tile Installation
+            </h3>
+            <p className="text-muted-foreground">
+              Complete bathroom transformation with modern tile installation and a perfect finish
+            </p>
+          </div>
         </div>
 
         <div className="text-center mt-12">
