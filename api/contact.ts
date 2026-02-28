@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { getPool, hasDatabase } from "./_db";
+import { getPool, hasDatabase } from "./db";
 
 type ContactSubmission = {
   id: string;
