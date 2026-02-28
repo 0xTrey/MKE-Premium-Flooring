@@ -1,4 +1,4 @@
-import { getPool, hasDatabase } from "./_db.ts";
+import { getPool, hasDatabase } from "./_db";
 
 type PhotoRecord = {
   id: string;
