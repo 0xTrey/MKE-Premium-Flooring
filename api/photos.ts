@@ -1,4 +1,7 @@
-import { getPool, hasDatabase } from "./db";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import ws from "ws";
+
+neonConfig.webSocketConstructor = ws;
 
 type PhotoRecord = {
   id: string;
@@ -38,6 +41,23 @@ const FALLBACK_FILENAMES = [
   "PE27_1760449066500.jpg",
   "PE28_1760449066500.jpg",
 ];
+let pool: Pool | null = null;
+
+function hasDatabase(): boolean {
+  return Boolean(process.env.DATABASE_URL);
+}
+
+function getPool(): Pool {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not set");
+  }
+
+  if (!pool) {
+    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  }
+
+  return pool;
+}
 
 function fallbackPhotos(): PhotoRecord[] {
   return FALLBACK_FILENAMES.map((filename, idx) => ({

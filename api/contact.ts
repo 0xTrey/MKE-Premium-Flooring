@@ -1,5 +1,8 @@
 import { randomUUID } from "crypto";
-import { getPool, hasDatabase } from "./db";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import ws from "ws";
+
+neonConfig.webSocketConstructor = ws;
 
 type ContactSubmission = {
   id: string;
@@ -12,6 +15,23 @@ type ContactSubmission = {
 };
 
 const memorySubmissions: ContactSubmission[] = [];
+let pool: Pool | null = null;
+
+function hasDatabase(): boolean {
+  return Boolean(process.env.DATABASE_URL);
+}
+
+function getPool(): Pool {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is not set");
+  }
+
+  if (!pool) {
+    pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  }
+
+  return pool;
+}
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
