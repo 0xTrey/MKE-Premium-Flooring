@@ -5,10 +5,22 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import NotFound from "@/pages/not-found";
+import OfficeLoginPage from "@/pages/office-login";
+import OfficeProjectsPage from "@/pages/office-projects";
+import OfficeProjectDetailPage from "@/pages/office-project-detail";
+import OfficeQuotePage from "@/pages/office-quote";
 
 function Router() {
   return (
     <Switch>
+      <Route path="/office/login" component={OfficeLoginPage} />
+      <Route path="/office/projects/:projectId/quote">
+        {(params) => <OfficeQuotePage projectId={params.projectId} />}
+      </Route>
+      <Route path="/office/projects/:projectId">
+        {(params) => <OfficeProjectDetailPage projectId={params.projectId} />}
+      </Route>
+      <Route path="/office/projects" component={OfficeProjectsPage} />
       <Route path="/" component={Home} />
       <Route component={NotFound} />
     </Switch>
