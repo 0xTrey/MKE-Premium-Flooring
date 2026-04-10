@@ -1,21 +1,3 @@
-FROM node:20-bookworm-slim AS deps
-
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-RUN npm ci
-
-FROM deps AS build
-
-COPY client ./client
-COPY server ./server
-COPY shared ./shared
-COPY api ./api
-COPY attached_assets ./attached_assets
-COPY components.json drizzle.config.ts postcss.config.js tailwind.config.ts tsconfig.json vercel.json vite.config.ts ./
-
-RUN npm run build
-
 FROM node:20-bookworm-slim AS runner
 
 WORKDIR /app
@@ -29,7 +11,7 @@ ENV NODE_ENV=production
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
-COPY --from=build /app/dist ./dist
+COPY dist ./dist
 
 EXPOSE 3000
 
