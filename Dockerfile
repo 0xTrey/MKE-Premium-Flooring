@@ -11,7 +11,7 @@ ENV NODE_ENV=production
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
-COPY dist ./dist
+COPY railway-dist ./dist
 
 EXPOSE 3000
 
