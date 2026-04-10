@@ -20,7 +20,7 @@ export function TakeoffsTable({ files, takeoffs, setTakeoffs }: TakeoffsTablePro
   return (
     <div className="space-y-4">
       <div className="overflow-x-auto rounded-md border bg-background">
-        <Table>
+        <Table className="min-w-[1120px]">
           <TableHeader>
             <TableRow>
               <TableHead>Approved</TableHead>
@@ -47,16 +47,17 @@ export function TakeoffsTable({ files, takeoffs, setTakeoffs }: TakeoffsTablePro
                   />
                 </TableCell>
                 <TableCell>
-                  <Input value={takeoff.roomName} onChange={(event) => updateTakeoff(takeoff.id, (current) => ({ ...current, roomName: event.target.value }))} />
+                  <Input className="min-w-[150px]" value={takeoff.roomName} onChange={(event) => updateTakeoff(takeoff.id, (current) => ({ ...current, roomName: event.target.value }))} />
                 </TableCell>
                 <TableCell>
-                  <Input value={takeoff.levelName} onChange={(event) => updateTakeoff(takeoff.id, (current) => ({ ...current, levelName: event.target.value }))} />
+                  <Input className="min-w-[140px]" value={takeoff.levelName} onChange={(event) => updateTakeoff(takeoff.id, (current) => ({ ...current, levelName: event.target.value }))} />
                 </TableCell>
                 <TableCell>
-                  <Input value={takeoff.materialHint} onChange={(event) => updateTakeoff(takeoff.id, (current) => ({ ...current, materialHint: event.target.value }))} />
+                  <Input className="min-w-[120px]" value={takeoff.materialHint} onChange={(event) => updateTakeoff(takeoff.id, (current) => ({ ...current, materialHint: event.target.value }))} />
                 </TableCell>
                 <TableCell>
                   <Input
+                    className="min-w-[100px]"
                     type="number"
                     min="0"
                     step="0.01"
@@ -66,6 +67,7 @@ export function TakeoffsTable({ files, takeoffs, setTakeoffs }: TakeoffsTablePro
                 </TableCell>
                 <TableCell>
                   <Input
+                    className="min-w-[100px]"
                     type="number"
                     min="0"
                     max="1"
@@ -75,7 +77,7 @@ export function TakeoffsTable({ files, takeoffs, setTakeoffs }: TakeoffsTablePro
                   />
                 </TableCell>
                 <TableCell>
-                  <div className="space-y-2">
+                  <div className="min-w-[280px] space-y-2">
                     <select
                       className="h-10 w-full rounded-md border bg-background px-3 text-sm"
                       value={takeoff.sourceFileId || ""}

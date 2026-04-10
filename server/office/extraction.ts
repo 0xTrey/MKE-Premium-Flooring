@@ -31,6 +31,56 @@ const ROOM_HINTS = [
 ];
 
 const MATERIAL_HINTS = ["lvp", "vinyl", "tile", "hardwood", "laminate", "carpet", "engineered wood"];
+const TAKEOFF_EXCLUDE_HINTS = [
+  "allowable",
+  "bearing pressure",
+  "building area",
+  "dead load",
+  "design load",
+  "dwelling",
+  "foundation",
+  "live load",
+  "lot area",
+  "occupancy",
+  "parking",
+  "project team",
+  "provided",
+  "roof",
+  "sheet",
+  "site",
+  "soil",
+  "state rev",
+  "structural",
+  "total area",
+  "truss",
+];
+const TAKEOFF_INCLUDE_PATTERNS = [
+  /\bunit\s+[a-z0-9-]+\b/i,
+  /\bgarage\b/i,
+  /\bbed(?:room)?\b/i,
+  /\bbath(?:room)?\b/i,
+  /\bkitchen\b/i,
+  /\bliving\b/i,
+  /\bdining\b/i,
+  /\bfamily\b/i,
+  /\bentry\b/i,
+  /\bfoyer\b/i,
+  /\bhall(?:way)?\b/i,
+  /\blaundry\b/i,
+  /\bcloset\b/i,
+  /\boffice\b/i,
+  /\bden\b/i,
+  /\bloft\b/i,
+  /\bstairs?\b/i,
+  /\bmudroom\b/i,
+  /\bbasement\b/i,
+  /\bmechanical\b/i,
+  /\butility\b/i,
+  /\bpantry\b/i,
+  /\bstorage\b/i,
+  /\bporch\b/i,
+  /\bdeck\b/i,
+];
 
 type ExtractionCandidate = {
   roomName: string;
@@ -41,6 +91,15 @@ type ExtractionCandidate = {
   notes: string;
   sourceReference: string;
 };
+
+export function pickTakeoffSourceFiles<T extends Pick<ProjectFileRecord, "fileKind">>(files: T[]) {
+  const primary = files.filter((file) => file.fileKind === "plan" || file.fileKind === "image");
+  if (primary.length) {
+    return primary;
+  }
+
+  return files.filter((file) => file.fileKind !== "packet");
+}
 
 export function detectFileKind(filename: string, mimeType: string): OfficeFileKind {
   const lowered = filename.toLowerCase();
@@ -174,34 +233,70 @@ function getMaterialHint(text: string, filename: string) {
 }
 
 function normalizeRoomName(value: string) {
-  return value
+  const normalized = value
     .replace(/[_-]+/g, " ")
+    .replace(/\s*[:;,-]+\s*$/g, "")
+    .replace(/^[^A-Za-z0-9]+/g, "")
+    .replace(/[^A-Za-z0-9)]+$/g, "")
     .replace(/\s{2,}/g, " ")
-    .trim()
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+    .trim();
+
+  const cased = normalized === normalized.toUpperCase() ? normalized.toLowerCase() : normalized;
+  return cased.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function parseSquareFeet(value: string) {
+  return Number(value.replace(/,/g, ""));
+}
+
+function normalizeReference(value: string) {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function isLikelyTakeoffLabel(value: string) {
+  const lowered = value.toLowerCase().trim();
+  if (!lowered) {
+    return false;
+  }
+
+  if (TAKEOFF_EXCLUDE_HINTS.some((hint) => lowered.includes(hint))) {
+    return false;
+  }
+
+  if (ROOM_HINTS.some((room) => lowered.includes(room))) {
+    return true;
+  }
+
+  return TAKEOFF_INCLUDE_PATTERNS.some((pattern) => pattern.test(lowered));
 }
 
 function collectSquareFootageMatches(text: string) {
   const matches: Array<{ roomName: string; squareFeet: number; reference: string }> = [];
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => normalizeReference(line))
+    .filter(Boolean);
   const patterns = [
-    /([A-Za-z0-9 #/&()-]{3,60})\s+(\d{2,5}(?:\.\d+)?)\s*(?:sq\.?\s*ft|square feet|sf|s\.f\.)/gi,
-    /([A-Za-z0-9 #/&()-]{3,60})\s*[:\-]\s*(\d{2,5}(?:\.\d+)?)\s*(?:sq\.?\s*ft|square feet|sf|s\.f\.)/gi,
+    /([A-Za-z][A-Za-z0-9 #/&().,'-]{2,80})\s*[:\-]\s*(\d{1,3}(?:,\d{3})+|\d{2,5})(?:\.\d+)?\s*(?:sq\.?\s*ft|square feet|sf|s\.f\.)(?=$|[^A-Za-z])/gi,
+    /([A-Za-z][A-Za-z0-9 #/&().,'-]{2,80})\s+(\d{1,3}(?:,\d{3})+|\d{2,5})(?:\.\d+)?\s*(?:sq\.?\s*ft|square feet|sf|s\.f\.)(?=$|[^A-Za-z])/gi,
   ];
 
-  for (const pattern of patterns) {
-    for (const match of text.matchAll(pattern)) {
-      const rawRoomName = (match[1] || "").trim();
-      const squareFeet = Number(match[2]);
+  for (const line of lines) {
+    for (const pattern of patterns) {
+      for (const match of line.matchAll(pattern)) {
+        const rawRoomName = normalizeRoomName(match[1] || "");
+        const squareFeet = parseSquareFeet(match[2] || "");
 
-      if (!rawRoomName || Number.isNaN(squareFeet)) {
-        continue;
+        if (!rawRoomName || Number.isNaN(squareFeet) || !isLikelyTakeoffLabel(rawRoomName)) {
+          continue;
+        }
+
+        matches.push({
+          roomName: rawRoomName,
+          squareFeet,
+          reference: normalizeReference(match[0] || line),
+        });
       }
-
-      matches.push({
-        roomName: normalizeRoomName(rawRoomName),
-        squareFeet,
-        reference: match[0],
-      });
     }
   }
 
@@ -210,7 +305,8 @@ function collectSquareFootageMatches(text: string) {
 
 function collectRoomHints(text: string, filename: string) {
   const lowered = `${filename}\n${text}`.toLowerCase();
-  return ROOM_HINTS.filter((room) => lowered.includes(room));
+  const matches = ROOM_HINTS.filter((room) => lowered.includes(room));
+  return matches.filter((room) => !matches.some((other) => other !== room && other.includes(room)));
 }
 
 function inferLevelName(text: string, filename: string) {

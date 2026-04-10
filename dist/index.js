@@ -481,6 +481,63 @@ var ROOM_HINTS = [
   "den"
 ];
 var MATERIAL_HINTS = ["lvp", "vinyl", "tile", "hardwood", "laminate", "carpet", "engineered wood"];
+var TAKEOFF_EXCLUDE_HINTS = [
+  "allowable",
+  "bearing pressure",
+  "building area",
+  "dead load",
+  "design load",
+  "dwelling",
+  "foundation",
+  "live load",
+  "lot area",
+  "occupancy",
+  "parking",
+  "project team",
+  "provided",
+  "roof",
+  "sheet",
+  "site",
+  "soil",
+  "state rev",
+  "structural",
+  "total area",
+  "truss"
+];
+var TAKEOFF_INCLUDE_PATTERNS = [
+  /\bunit\s+[a-z0-9-]+\b/i,
+  /\bgarage\b/i,
+  /\bbed(?:room)?\b/i,
+  /\bbath(?:room)?\b/i,
+  /\bkitchen\b/i,
+  /\bliving\b/i,
+  /\bdining\b/i,
+  /\bfamily\b/i,
+  /\bentry\b/i,
+  /\bfoyer\b/i,
+  /\bhall(?:way)?\b/i,
+  /\blaundry\b/i,
+  /\bcloset\b/i,
+  /\boffice\b/i,
+  /\bden\b/i,
+  /\bloft\b/i,
+  /\bstairs?\b/i,
+  /\bmudroom\b/i,
+  /\bbasement\b/i,
+  /\bmechanical\b/i,
+  /\butility\b/i,
+  /\bpantry\b/i,
+  /\bstorage\b/i,
+  /\bporch\b/i,
+  /\bdeck\b/i
+];
+function pickTakeoffSourceFiles(files) {
+  const primary = files.filter((file) => file.fileKind === "plan" || file.fileKind === "image");
+  if (primary.length) {
+    return primary;
+  }
+  return files.filter((file) => file.fileKind !== "packet");
+}
 function detectFileKind(filename, mimeType) {
   const lowered = filename.toLowerCase();
   if (lowered.endsWith(".zip")) {
@@ -586,26 +643,50 @@ function getMaterialHint(text2, filename) {
   return MATERIAL_HINTS.find((hint) => combined.includes(hint)) || "";
 }
 function normalizeRoomName(value) {
-  return value.replace(/[_-]+/g, " ").replace(/\s{2,}/g, " ").trim().replace(/\b\w/g, (char) => char.toUpperCase());
+  const normalized = value.replace(/[_-]+/g, " ").replace(/\s*[:;,-]+\s*$/g, "").replace(/^[^A-Za-z0-9]+/g, "").replace(/[^A-Za-z0-9)]+$/g, "").replace(/\s{2,}/g, " ").trim();
+  const cased = normalized === normalized.toUpperCase() ? normalized.toLowerCase() : normalized;
+  return cased.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+function parseSquareFeet(value) {
+  return Number(value.replace(/,/g, ""));
+}
+function normalizeReference(value) {
+  return value.replace(/\s+/g, " ").trim();
+}
+function isLikelyTakeoffLabel(value) {
+  const lowered = value.toLowerCase().trim();
+  if (!lowered) {
+    return false;
+  }
+  if (TAKEOFF_EXCLUDE_HINTS.some((hint) => lowered.includes(hint))) {
+    return false;
+  }
+  if (ROOM_HINTS.some((room) => lowered.includes(room))) {
+    return true;
+  }
+  return TAKEOFF_INCLUDE_PATTERNS.some((pattern) => pattern.test(lowered));
 }
 function collectSquareFootageMatches(text2) {
   const matches = [];
+  const lines = text2.split(/\r?\n/).map((line) => normalizeReference(line)).filter(Boolean);
   const patterns = [
-    /([A-Za-z0-9 #/&()-]{3,60})\s+(\d{2,5}(?:\.\d+)?)\s*(?:sq\.?\s*ft|square feet|sf|s\.f\.)/gi,
-    /([A-Za-z0-9 #/&()-]{3,60})\s*[:\-]\s*(\d{2,5}(?:\.\d+)?)\s*(?:sq\.?\s*ft|square feet|sf|s\.f\.)/gi
+    /([A-Za-z][A-Za-z0-9 #/&().,'-]{2,80})\s*[:\-]\s*(\d{1,3}(?:,\d{3})+|\d{2,5})(?:\.\d+)?\s*(?:sq\.?\s*ft|square feet|sf|s\.f\.)(?=$|[^A-Za-z])/gi,
+    /([A-Za-z][A-Za-z0-9 #/&().,'-]{2,80})\s+(\d{1,3}(?:,\d{3})+|\d{2,5})(?:\.\d+)?\s*(?:sq\.?\s*ft|square feet|sf|s\.f\.)(?=$|[^A-Za-z])/gi
   ];
-  for (const pattern of patterns) {
-    for (const match of text2.matchAll(pattern)) {
-      const rawRoomName = (match[1] || "").trim();
-      const squareFeet = Number(match[2]);
-      if (!rawRoomName || Number.isNaN(squareFeet)) {
-        continue;
+  for (const line of lines) {
+    for (const pattern of patterns) {
+      for (const match of line.matchAll(pattern)) {
+        const rawRoomName = normalizeRoomName(match[1] || "");
+        const squareFeet = parseSquareFeet(match[2] || "");
+        if (!rawRoomName || Number.isNaN(squareFeet) || !isLikelyTakeoffLabel(rawRoomName)) {
+          continue;
+        }
+        matches.push({
+          roomName: rawRoomName,
+          squareFeet,
+          reference: normalizeReference(match[0] || line)
+        });
       }
-      matches.push({
-        roomName: normalizeRoomName(rawRoomName),
-        squareFeet,
-        reference: match[0]
-      });
     }
   }
   return matches;
@@ -613,7 +694,8 @@ function collectSquareFootageMatches(text2) {
 function collectRoomHints(text2, filename) {
   const lowered = `${filename}
 ${text2}`.toLowerCase();
-  return ROOM_HINTS.filter((room) => lowered.includes(room));
+  const matches = ROOM_HINTS.filter((room) => lowered.includes(room));
+  return matches.filter((room) => !matches.some((other) => other !== room && other.includes(room)));
 }
 function inferLevelName(text2, filename) {
   const lowered = `${filename} ${text2}`.toLowerCase();
@@ -1747,7 +1829,8 @@ function getExtension(filename) {
 }
 async function runProjectExtraction(projectId) {
   const bundleBefore = await getProjectBundle(projectId);
-  const takeoffs = bundleBefore.files.filter((file) => file.fileKind !== "packet").flatMap((file) => buildTakeoffCandidates(file, file.extractedText));
+  const takeoffSourceFiles = pickTakeoffSourceFiles(bundleBefore.files);
+  const takeoffs = takeoffSourceFiles.flatMap((file) => buildTakeoffCandidates(file, file.extractedText));
   await replaceProjectTakeoffs(projectId, takeoffs.map((takeoff, index) => ({
     ...takeoff,
     sortOrder: index * 10

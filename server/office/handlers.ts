@@ -17,7 +17,7 @@ import {
   getOfficeSessionFromRequest,
   isValidOfficePassword,
 } from "./auth";
-import { buildTakeoffCandidates, detectFileKind, extractTextFromFile } from "./extraction";
+import { buildTakeoffCandidates, detectFileKind, extractTextFromFile, pickTakeoffSourceFiles } from "./extraction";
 import {
   createEstimateProject,
   createQuoteSnapshot,
@@ -109,8 +109,8 @@ function getExtension(filename: string) {
 
 async function runProjectExtraction(projectId: string) {
   const bundleBefore = await getProjectBundle(projectId);
-  const takeoffs = bundleBefore.files
-    .filter((file) => file.fileKind !== "packet")
+  const takeoffSourceFiles = pickTakeoffSourceFiles(bundleBefore.files);
+  const takeoffs = takeoffSourceFiles
     .flatMap((file) => buildTakeoffCandidates(file, file.extractedText));
 
   await replaceProjectTakeoffs(projectId, takeoffs.map((takeoff, index) => ({
