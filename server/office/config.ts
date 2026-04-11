@@ -37,3 +37,15 @@ export function getAiExtractionKey() {
 export function getAiExtractionModel() {
   return process.env.AI_EXTRACTION_MODEL || "document-extractor";
 }
+
+export function getOfficeChatApiKey() {
+  return process.env.GEMINI_API_KEY || process.env.OFFICE_CHAT_API_KEY || "";
+}
+
+export function getOfficeChatModel() {
+  return process.env.GEMINI_MODEL || process.env.OFFICE_CHAT_MODEL || "gemini-2.5-flash";
+}
+
+export function getOfficeChatApiUrl() {
+  return `https://generativelanguage.googleapis.com/v1beta/models/${getOfficeChatModel()}:generateContent`;
+}

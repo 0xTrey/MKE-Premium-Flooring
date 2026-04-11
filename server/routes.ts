@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import {
+  handleOfficeChat,
   handleOfficeExtract,
   handleOfficeFile,
   handleOfficeLineItems,
@@ -86,6 +87,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/office/project", handleOfficeProject);
   app.post("/api/office/upload", handleOfficeUpload);
   app.post("/api/office/extract", handleOfficeExtract);
+  app.get("/api/office/chat", handleOfficeChat);
+  app.post("/api/office/chat", handleOfficeChat);
   app.get("/api/office/takeoffs", handleOfficeTakeoffs);
   app.patch("/api/office/takeoffs", handleOfficeTakeoffs);
   app.get("/api/office/line-items", handleOfficeLineItems);

@@ -16,6 +16,8 @@ export const officeFileKinds = [
   "image",
   "other",
 ] as const;
+export const officeChatRoles = ["user", "assistant"] as const;
+export const officeChatTargets = ["project", "takeoffs", "line_items", "price_book", "quote"] as const;
 
 export const pricingModes = [
   "per_square_foot",
@@ -28,6 +30,8 @@ export const lineItemCategories = ["material", "labor", "misc"] as const;
 
 export const officeProjectStatusSchema = z.enum(officeProjectStatuses);
 export const officeFileKindSchema = z.enum(officeFileKinds);
+export const officeChatRoleSchema = z.enum(officeChatRoles);
+export const officeChatTargetSchema = z.enum(officeChatTargets);
 export const pricingModeSchema = z.enum(pricingModes);
 export const lineItemCategorySchema = z.enum(lineItemCategories);
 
@@ -119,8 +123,44 @@ export const quoteRequestSchema = z.object({
   scopeSummary: z.string().optional().default(""),
 });
 
+export const officeChatProjectPatchSchema = z.object({
+  name: z.string().min(2).optional(),
+  customerName: z.string().optional(),
+  customerEmail: z.string().email().or(z.literal("")).optional(),
+  customerPhone: z.string().optional(),
+  projectAddress: z.string().optional(),
+  projectBrief: z.string().optional(),
+  wastePercent: z.number().min(0).max(100).optional(),
+  taxRate: z.number().min(0).max(100).optional(),
+  markupRate: z.number().min(0).max(100).optional(),
+  quoteTitle: z.string().optional(),
+  scopeSummary: z.string().optional(),
+  assumptions: z.string().optional(),
+  status: officeProjectStatusSchema.optional(),
+});
+
+export const officeChatEffectSchema = z.object({
+  target: officeChatTargetSchema,
+  summary: z.string().min(1),
+});
+
+export const officeChatMessageSchema = z.object({
+  id: z.string(),
+  projectId: z.string(),
+  role: officeChatRoleSchema,
+  content: z.string().min(1),
+  effects: z.array(officeChatEffectSchema).default([]),
+  createdAt: z.string(),
+});
+
+export const officeChatRequestSchema = z.object({
+  message: z.string().min(1, "Message is required"),
+});
+
 export type OfficeProjectStatus = z.infer<typeof officeProjectStatusSchema>;
 export type OfficeFileKind = z.infer<typeof officeFileKindSchema>;
+export type OfficeChatRole = z.infer<typeof officeChatRoleSchema>;
+export type OfficeChatTarget = z.infer<typeof officeChatTargetSchema>;
 export type PricingMode = z.infer<typeof pricingModeSchema>;
 export type LineItemCategory = z.infer<typeof lineItemCategorySchema>;
 export type OfficeLoginInput = z.infer<typeof officeLoginSchema>;
@@ -133,6 +173,10 @@ export type SavePriceBookInput = z.infer<typeof savePriceBookSchema>;
 export type EstimateLineItem = z.infer<typeof estimateLineItemSchema>;
 export type SaveLineItemsInput = z.infer<typeof saveLineItemsSchema>;
 export type QuoteRequestInput = z.infer<typeof quoteRequestSchema>;
+export type OfficeChatProjectPatch = z.infer<typeof officeChatProjectPatchSchema>;
+export type OfficeChatEffect = z.infer<typeof officeChatEffectSchema>;
+export type OfficeChatMessage = z.infer<typeof officeChatMessageSchema>;
+export type OfficeChatRequestInput = z.infer<typeof officeChatRequestSchema>;
 
 export type EstimateProject = {
   id: string;
@@ -211,4 +255,9 @@ export type OfficeSessionInfo = {
   authenticated: true;
   expiresAt: string;
   companyName: string;
+};
+
+export type OfficeChatThread = {
+  messages: OfficeChatMessage[];
+  bundle: OfficeProjectBundle;
 };

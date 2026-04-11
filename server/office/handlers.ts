@@ -2,7 +2,9 @@ import { randomUUID } from "crypto";
 import type { IncomingMessage } from "http";
 import {
   createEstimateProjectSchema,
+  estimateLineItemSchema,
   extractedTakeoffSchema,
+  officeChatRequestSchema,
   officeLoginSchema,
   priceBookItemSchema,
   quoteRequestSchema,
@@ -17,15 +19,18 @@ import {
   getOfficeSessionFromRequest,
   isValidOfficePassword,
 } from "./auth";
+import { generateOfficeAssistantResponse } from "./chat";
 import { buildTakeoffCandidates, detectFileKind, extractTextFromFile, pickTakeoffSourceFiles } from "./extraction";
 import {
   createEstimateProject,
+  createOfficeChatMessage,
   createQuoteSnapshot,
   ensureOfficeSchema,
   getLatestQuoteSnapshot,
   getProjectBundle,
   getProjectFilePayload,
   listEstimateProjects,
+  listOfficeChatMessages,
   listPriceBookItems,
   listProjectLineItems,
   listProjectTakeoffs,
@@ -120,6 +125,42 @@ async function runProjectExtraction(projectId: string) {
 
   await syncProjectLineItems(projectId);
   return getProjectBundle(projectId);
+}
+
+function normalizeAssistantTakeoffs(takeoffs: unknown[]) {
+  return takeoffs.map((takeoff, index) =>
+    {
+      const candidate = typeof takeoff === "object" && takeoff ? takeoff as Record<string, unknown> : {};
+      return extractedTakeoffSchema.parse({
+        ...candidate,
+        sortOrder: typeof candidate.sortOrder === "number" ? candidate.sortOrder : index * 10,
+      });
+    },
+  );
+}
+
+function normalizeAssistantLineItems(lineItems: unknown[]) {
+  return lineItems.map((lineItem, index) =>
+    {
+      const candidate = typeof lineItem === "object" && lineItem ? lineItem as Record<string, unknown> : {};
+      return estimateLineItemSchema.parse({
+        ...candidate,
+        sortOrder: typeof candidate.sortOrder === "number" ? candidate.sortOrder : index * 10,
+      });
+    },
+  );
+}
+
+function normalizeAssistantPriceBook(items: unknown[]) {
+  return items.map((item, index) =>
+    {
+      const candidate = typeof item === "object" && item ? item as Record<string, unknown> : {};
+      return priceBookItemSchema.parse({
+        ...candidate,
+        sortOrder: typeof candidate.sortOrder === "number" ? candidate.sortOrder : index * 10,
+      });
+    },
+  );
 }
 
 export async function handleOfficeSession(req: RequestLike, res: ResponseLike) {
@@ -378,6 +419,72 @@ export async function handleOfficePriceBook(req: RequestLike, res: ResponseLike)
       const items = Array.isArray(body.items) ? body.items.map((item: unknown) => priceBookItemSchema.parse(item)) : [];
       const saved = await replacePriceBookItems(items);
       sendJson(res, 200, { success: true, data: saved });
+      return;
+    }
+
+    sendJson(res, 405, { success: false, message: "Method not allowed" });
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+
+export async function handleOfficeChat(req: RequestLike, res: ResponseLike) {
+  try {
+    assertOfficeSession(req);
+    const projectId = getQueryParam(req, "projectId");
+    if (!projectId) {
+      sendJson(res, 400, { success: false, message: "Project id is required" });
+      return;
+    }
+
+    if (req.method === "GET") {
+      const [messages, bundle] = await Promise.all([
+        listOfficeChatMessages(projectId),
+        getProjectBundle(projectId),
+      ]);
+      sendJson(res, 200, { success: true, data: { messages, bundle } });
+      return;
+    }
+
+    if (req.method === "POST") {
+      const body = officeChatRequestSchema.parse(await getJsonBody(req));
+      await createOfficeChatMessage(projectId, "user", body.message);
+
+      const startingBundle = await getProjectBundle(projectId);
+      const messageHistory = await listOfficeChatMessages(projectId);
+      const assistant = await generateOfficeAssistantResponse(startingBundle, messageHistory);
+
+      if (assistant.projectPatch && Object.keys(assistant.projectPatch).length > 0) {
+        await updateEstimateProject(projectId, assistant.projectPatch);
+      }
+
+      let takeoffsChanged = false;
+      let priceBookChanged = false;
+
+      if (assistant.takeoffs) {
+        await replaceProjectTakeoffs(projectId, normalizeAssistantTakeoffs(assistant.takeoffs));
+        takeoffsChanged = true;
+      }
+
+      if (assistant.priceBook) {
+        await replacePriceBookItems(normalizeAssistantPriceBook(assistant.priceBook));
+        priceBookChanged = true;
+      }
+
+      if (assistant.lineItems) {
+        await replaceProjectLineItems(projectId, normalizeAssistantLineItems(assistant.lineItems));
+      } else if (takeoffsChanged || priceBookChanged) {
+        await syncProjectLineItems(projectId);
+      }
+
+      await createOfficeChatMessage(projectId, "assistant", assistant.assistantMessage, assistant.effects);
+
+      const [messages, bundle] = await Promise.all([
+        listOfficeChatMessages(projectId),
+        getProjectBundle(projectId),
+      ]);
+
+      sendJson(res, 200, { success: true, data: { messages, bundle } });
       return;
     }
 

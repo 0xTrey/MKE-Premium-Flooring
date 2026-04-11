@@ -82,6 +82,8 @@ var officeFileKinds = [
   "image",
   "other"
 ];
+var officeChatRoles = ["user", "assistant"];
+var officeChatTargets = ["project", "takeoffs", "line_items", "price_book", "quote"];
 var pricingModes = [
   "per_square_foot",
   "per_box",
@@ -91,6 +93,8 @@ var pricingModes = [
 var lineItemCategories = ["material", "labor", "misc"];
 var officeProjectStatusSchema = z.enum(officeProjectStatuses);
 var officeFileKindSchema = z.enum(officeFileKinds);
+var officeChatRoleSchema = z.enum(officeChatRoles);
+var officeChatTargetSchema = z.enum(officeChatTargets);
 var pricingModeSchema = z.enum(pricingModes);
 var lineItemCategorySchema = z.enum(lineItemCategories);
 var officeLoginSchema = z.object({
@@ -171,6 +175,36 @@ var quoteRequestSchema = z.object({
   assumptions: z.string().optional().default(""),
   scopeSummary: z.string().optional().default("")
 });
+var officeChatProjectPatchSchema = z.object({
+  name: z.string().min(2).optional(),
+  customerName: z.string().optional(),
+  customerEmail: z.string().email().or(z.literal("")).optional(),
+  customerPhone: z.string().optional(),
+  projectAddress: z.string().optional(),
+  projectBrief: z.string().optional(),
+  wastePercent: z.number().min(0).max(100).optional(),
+  taxRate: z.number().min(0).max(100).optional(),
+  markupRate: z.number().min(0).max(100).optional(),
+  quoteTitle: z.string().optional(),
+  scopeSummary: z.string().optional(),
+  assumptions: z.string().optional(),
+  status: officeProjectStatusSchema.optional()
+});
+var officeChatEffectSchema = z.object({
+  target: officeChatTargetSchema,
+  summary: z.string().min(1)
+});
+var officeChatMessageSchema = z.object({
+  id: z.string(),
+  projectId: z.string(),
+  role: officeChatRoleSchema,
+  content: z.string().min(1),
+  effects: z.array(officeChatEffectSchema).default([]),
+  createdAt: z.string()
+});
+var officeChatRequestSchema = z.object({
+  message: z.string().min(1, "Message is required")
+});
 
 // server/office/auth.ts
 import { timingSafeEqual, createHmac } from "crypto";
@@ -205,6 +239,15 @@ function getAiExtractionKey() {
 }
 function getAiExtractionModel() {
   return process.env.AI_EXTRACTION_MODEL || "document-extractor";
+}
+function getOfficeChatApiKey() {
+  return process.env.GEMINI_API_KEY || process.env.OFFICE_CHAT_API_KEY || "";
+}
+function getOfficeChatModel() {
+  return process.env.GEMINI_MODEL || process.env.OFFICE_CHAT_MODEL || "gemini-2.5-flash";
+}
+function getOfficeChatApiUrl() {
+  return `https://generativelanguage.googleapis.com/v1beta/models/${getOfficeChatModel()}:generateContent`;
 }
 
 // server/office/auth.ts
@@ -297,6 +340,290 @@ function assertOfficeSession(req) {
     throw error;
   }
   return session;
+}
+
+// server/office/chat.ts
+import { z as z2 } from "zod";
+var chatAssistantResponseSchema = z2.object({
+  assistantMessage: z2.string().min(1),
+  effects: z2.array(officeChatEffectSchema).default([]),
+  projectPatch: officeChatProjectPatchSchema.optional(),
+  takeoffs: z2.array(extractedTakeoffSchema).optional(),
+  lineItems: z2.array(estimateLineItemSchema).optional(),
+  priceBook: z2.array(priceBookItemSchema).optional(),
+  followUps: z2.array(z2.string()).default([])
+});
+function truncate(value, maxLength) {
+  const trimmed = value.trim();
+  if (trimmed.length <= maxLength) {
+    return trimmed;
+  }
+  return `${trimmed.slice(0, maxLength - 1)}\u2026`;
+}
+function extractJsonPayload(value) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    const start = value.indexOf("{");
+    const end = value.lastIndexOf("}");
+    if (start >= 0 && end > start) {
+      return JSON.parse(value.slice(start, end + 1));
+    }
+    throw new Error("Model did not return valid JSON");
+  }
+}
+function buildPromptContext(bundle, messages) {
+  const projectContext = {
+    project: {
+      id: bundle.project.id,
+      name: bundle.project.name,
+      customerName: bundle.project.customerName,
+      customerEmail: bundle.project.customerEmail,
+      customerPhone: bundle.project.customerPhone,
+      projectAddress: bundle.project.projectAddress,
+      projectBrief: bundle.project.projectBrief,
+      wastePercent: bundle.project.wastePercent,
+      taxRate: bundle.project.taxRate,
+      markupRate: bundle.project.markupRate,
+      quoteTitle: bundle.project.quoteTitle,
+      scopeSummary: bundle.project.scopeSummary,
+      assumptions: bundle.project.assumptions,
+      status: bundle.project.status
+    },
+    totals: bundle.totals,
+    files: bundle.files.map((file) => ({
+      id: file.id,
+      name: file.originalName,
+      kind: file.fileKind,
+      notes: file.extractionNotes,
+      textSnippet: truncate(file.extractedText || "", 500)
+    })),
+    takeoffs: bundle.takeoffs.map((takeoff) => ({
+      id: takeoff.id,
+      sourceFileId: takeoff.sourceFileId,
+      roomName: takeoff.roomName,
+      levelName: takeoff.levelName,
+      materialHint: takeoff.materialHint,
+      squareFeet: takeoff.squareFeet,
+      confidence: takeoff.confidence,
+      approved: takeoff.approved,
+      notes: takeoff.notes,
+      sourceReference: takeoff.sourceReference,
+      sortOrder: takeoff.sortOrder
+    })),
+    lineItems: bundle.lineItems.map((lineItem) => ({
+      id: lineItem.id,
+      sourceTakeoffId: lineItem.sourceTakeoffId,
+      priceBookItemId: lineItem.priceBookItemId,
+      name: lineItem.name,
+      category: lineItem.category,
+      pricingMode: lineItem.pricingMode,
+      unitLabel: lineItem.unitLabel,
+      measurementValue: lineItem.measurementValue,
+      quantity: lineItem.quantity,
+      coveragePerUnit: lineItem.coveragePerUnit,
+      unitCost: lineItem.unitCost,
+      wastePercent: lineItem.wastePercent,
+      taxable: lineItem.taxable,
+      notes: lineItem.notes,
+      sortOrder: lineItem.sortOrder
+    })),
+    priceBook: bundle.priceBook.map((item) => ({
+      id: item.id,
+      name: item.name,
+      category: item.category,
+      pricingMode: item.pricingMode,
+      unitLabel: item.unitLabel,
+      unitCost: item.unitCost,
+      coveragePerUnit: item.coveragePerUnit,
+      defaultWastePercent: item.defaultWastePercent,
+      taxable: item.taxable,
+      active: item.active,
+      scope: item.scope,
+      notes: item.notes,
+      sortOrder: item.sortOrder
+    })),
+    recentMessages: messages.slice(-10).map((message) => ({
+      role: message.role,
+      content: message.content,
+      effects: message.effects
+    }))
+  };
+  return JSON.stringify(projectContext, null, 2);
+}
+function buildConversation(messages, projectContext) {
+  const conversation = messages.slice(-10).map((message) => ({
+    role: message.role === "assistant" ? "model" : "user",
+    parts: [{ text: message.content }]
+  }));
+  conversation.unshift({
+    role: "user",
+    parts: [
+      {
+        text: [
+          "Current flooring estimator project state:",
+          projectContext,
+          "",
+          "Use the project state above as the source of truth. If you change takeoffs, line items, or price book items, return the entire updated list for that section. If you are only answering a question, leave those fields out."
+        ].join("\n")
+      }
+    ]
+  });
+  return conversation;
+}
+async function generateOfficeAssistantResponse(bundle, messages) {
+  const apiKey = getOfficeChatApiKey();
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is not configured for office chat");
+  }
+  const requestBody = {
+    systemInstruction: {
+      parts: [
+        {
+          text: [
+            "You are the estimating copilot for a flooring company office workspace.",
+            "Your job is to turn plain-language chat into sane project state updates.",
+            "Prefer project-specific changes unless the user explicitly asks to change the company price book or defaults.",
+            "Never invent square footage that is not supported by the uploaded files, existing takeoffs, or the user's message.",
+            "If the user asks a question, answer directly and do not change state unless they clearly asked for a change.",
+            "Keep assistantMessage concise, practical, and human.",
+            "effects should describe the actual changes you made, for example 'Updated installation labor to $4.75 per sq ft'.",
+            "If you need clarification, ask a direct follow-up question in assistantMessage and leave state fields out.",
+            "Return JSON only."
+          ].join("\n")
+        }
+      ]
+    },
+    contents: buildConversation(messages, buildPromptContext(bundle, messages)),
+    generationConfig: {
+      temperature: 0.2,
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: "OBJECT",
+        required: ["assistantMessage", "effects", "followUps"],
+        properties: {
+          assistantMessage: { type: "STRING" },
+          effects: {
+            type: "ARRAY",
+            items: {
+              type: "OBJECT",
+              required: ["target", "summary"],
+              properties: {
+                target: { type: "STRING", enum: ["project", "takeoffs", "line_items", "price_book", "quote"] },
+                summary: { type: "STRING" }
+              }
+            }
+          },
+          projectPatch: {
+            type: "OBJECT",
+            properties: {
+              name: { type: "STRING" },
+              customerName: { type: "STRING" },
+              customerEmail: { type: "STRING" },
+              customerPhone: { type: "STRING" },
+              projectAddress: { type: "STRING" },
+              projectBrief: { type: "STRING" },
+              wastePercent: { type: "NUMBER" },
+              taxRate: { type: "NUMBER" },
+              markupRate: { type: "NUMBER" },
+              quoteTitle: { type: "STRING" },
+              scopeSummary: { type: "STRING" },
+              assumptions: { type: "STRING" },
+              status: { type: "STRING", enum: ["uploaded", "extracting", "needs_review", "ready_to_quote", "failed"] }
+            }
+          },
+          takeoffs: {
+            type: "ARRAY",
+            items: {
+              type: "OBJECT",
+              required: ["id", "sourceFileId", "roomName", "squareFeet", "confidence"],
+              properties: {
+                id: { type: "STRING" },
+                sourceFileId: { type: "STRING", nullable: true },
+                roomName: { type: "STRING" },
+                levelName: { type: "STRING" },
+                materialHint: { type: "STRING" },
+                squareFeet: { type: "NUMBER" },
+                confidence: { type: "NUMBER" },
+                notes: { type: "STRING" },
+                sourceReference: { type: "STRING" },
+                approved: { type: "BOOLEAN" },
+                sortOrder: { type: "NUMBER" }
+              }
+            }
+          },
+          lineItems: {
+            type: "ARRAY",
+            items: {
+              type: "OBJECT",
+              required: ["id", "sourceTakeoffId", "priceBookItemId", "name", "category", "pricingMode", "unitLabel", "unitCost"],
+              properties: {
+                id: { type: "STRING" },
+                sourceTakeoffId: { type: "STRING", nullable: true },
+                priceBookItemId: { type: "STRING", nullable: true },
+                name: { type: "STRING" },
+                category: { type: "STRING", enum: ["material", "labor", "misc"] },
+                pricingMode: { type: "STRING", enum: ["per_square_foot", "per_box", "flat_fee", "per_piece"] },
+                unitLabel: { type: "STRING" },
+                measurementValue: { type: "NUMBER" },
+                quantity: { type: "NUMBER" },
+                coveragePerUnit: { type: "NUMBER", nullable: true },
+                unitCost: { type: "NUMBER" },
+                wastePercent: { type: "NUMBER" },
+                taxable: { type: "BOOLEAN" },
+                notes: { type: "STRING" },
+                sortOrder: { type: "NUMBER" }
+              }
+            }
+          },
+          priceBook: {
+            type: "ARRAY",
+            items: {
+              type: "OBJECT",
+              required: ["id", "name", "category", "pricingMode", "unitLabel", "unitCost"],
+              properties: {
+                id: { type: "STRING" },
+                name: { type: "STRING" },
+                category: { type: "STRING", enum: ["material", "labor", "misc"] },
+                pricingMode: { type: "STRING", enum: ["per_square_foot", "per_box", "flat_fee", "per_piece"] },
+                unitLabel: { type: "STRING" },
+                unitCost: { type: "NUMBER" },
+                coveragePerUnit: { type: "NUMBER", nullable: true },
+                defaultWastePercent: { type: "NUMBER" },
+                taxable: { type: "BOOLEAN" },
+                active: { type: "BOOLEAN" },
+                scope: { type: "STRING" },
+                notes: { type: "STRING" },
+                sortOrder: { type: "NUMBER" }
+              }
+            }
+          },
+          followUps: {
+            type: "ARRAY",
+            items: { type: "STRING" }
+          }
+        }
+      }
+    }
+  };
+  const response = await fetch(getOfficeChatApiUrl(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey
+    },
+    body: JSON.stringify(requestBody)
+  });
+  if (!response.ok) {
+    const details = await response.text();
+    throw new Error(`Gemini request failed: ${details || response.statusText}`);
+  }
+  const payload = await response.json();
+  const rawText = payload.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("").trim();
+  if (!rawText) {
+    throw new Error("Gemini returned an empty response");
+  }
+  return chatAssistantResponseSchema.parse(extractJsonPayload(rawText));
 }
 
 // server/office/extraction.ts
@@ -804,7 +1131,7 @@ __export(schema_exports, {
 import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, timestamp, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
-import { z as z2 } from "zod";
+import { z as z3 } from "zod";
 var contactSubmissions = pgTable("contact_submissions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
@@ -829,11 +1156,11 @@ var insertContactSubmissionSchema = createInsertSchema(contactSubmissions).pick(
   projectType: true,
   location: true
 }).extend({
-  name: z2.string().min(2, "Name must be at least 2 characters"),
-  phone: z2.string().min(10, "Please enter a valid phone number"),
-  email: z2.string().email("Please enter a valid email address"),
-  projectType: z2.string().min(5, "Please describe your project"),
-  location: z2.string().min(3, "Please enter your location")
+  name: z3.string().min(2, "Name must be at least 2 characters"),
+  phone: z3.string().min(10, "Please enter a valid phone number"),
+  email: z3.string().email("Please enter a valid email address"),
+  projectType: z3.string().min(5, "Please describe your project"),
+  location: z3.string().min(3, "Please enter your location")
 });
 var insertPhotoSchema = createInsertSchema(photos).omit({
   id: true,
@@ -1137,6 +1464,16 @@ function mapQuote(row) {
     createdAt: toIsoString(row.created_at)
   };
 }
+function mapChatMessage(row) {
+  return {
+    id: String(row.id),
+    projectId: String(row.project_id),
+    role: String(row.role),
+    content: String(row.content || ""),
+    effects: Array.isArray(row.effects_json) ? row.effects_json : [],
+    createdAt: toIsoString(row.created_at)
+  };
+}
 async function ensureOfficeSchema() {
   if (officeSchemaReady) {
     return;
@@ -1248,10 +1585,20 @@ async function ensureOfficeSchema() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS office_chat_messages (
+      id TEXT PRIMARY KEY,
+      project_id TEXT NOT NULL REFERENCES estimate_projects(id) ON DELETE CASCADE,
+      role TEXT NOT NULL,
+      content TEXT NOT NULL,
+      effects_json JSONB NOT NULL DEFAULT '[]'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     CREATE INDEX IF NOT EXISTS idx_project_files_project_id ON project_files(project_id);
     CREATE INDEX IF NOT EXISTS idx_takeoffs_project_id ON extracted_takeoffs(project_id);
     CREATE INDEX IF NOT EXISTS idx_line_items_project_id ON estimate_line_items(project_id);
     CREATE INDEX IF NOT EXISTS idx_quotes_project_id ON quote_snapshots(project_id);
+    CREATE INDEX IF NOT EXISTS idx_office_chat_messages_project_id ON office_chat_messages(project_id, created_at ASC);
   `);
   const existing = await pool.query("SELECT COUNT(*)::int AS count FROM price_book_items");
   if (Number(existing.rows[0]?.count || 0) === 0) {
@@ -1640,6 +1987,27 @@ async function createQuoteSnapshot(projectId, overrides) {
   );
   return getLatestQuoteSnapshot(projectId);
 }
+async function listOfficeChatMessages(projectId) {
+  await ensureOfficeSchema();
+  const result = await pool.query(
+    "SELECT * FROM office_chat_messages WHERE project_id = $1 ORDER BY created_at ASC",
+    [projectId]
+  );
+  return result.rows.map((row) => mapChatMessage(row));
+}
+async function createOfficeChatMessage(projectId, role, content, effects = []) {
+  await ensureOfficeSchema();
+  const id = randomUUID2();
+  await pool.query(
+    `
+      INSERT INTO office_chat_messages (id, project_id, role, content, effects_json, created_at)
+      VALUES ($1, $2, $3, $4, $5::jsonb, NOW())
+    `,
+    [id, projectId, role, content, JSON.stringify(effects)]
+  );
+  const result = await pool.query("SELECT * FROM office_chat_messages WHERE id = $1 LIMIT 1", [id]);
+  return mapChatMessage(result.rows[0]);
+}
 async function getProjectBundle(projectId) {
   await ensureOfficeSchema();
   const [project, files, takeoffs, lineItems, priceBook, latestQuote] = await Promise.all([
@@ -1837,6 +2205,39 @@ async function runProjectExtraction(projectId) {
   })));
   await syncProjectLineItems(projectId);
   return getProjectBundle(projectId);
+}
+function normalizeAssistantTakeoffs(takeoffs) {
+  return takeoffs.map(
+    (takeoff, index) => {
+      const candidate = typeof takeoff === "object" && takeoff ? takeoff : {};
+      return extractedTakeoffSchema.parse({
+        ...candidate,
+        sortOrder: typeof candidate.sortOrder === "number" ? candidate.sortOrder : index * 10
+      });
+    }
+  );
+}
+function normalizeAssistantLineItems(lineItems) {
+  return lineItems.map(
+    (lineItem, index) => {
+      const candidate = typeof lineItem === "object" && lineItem ? lineItem : {};
+      return estimateLineItemSchema.parse({
+        ...candidate,
+        sortOrder: typeof candidate.sortOrder === "number" ? candidate.sortOrder : index * 10
+      });
+    }
+  );
+}
+function normalizeAssistantPriceBook(items) {
+  return items.map(
+    (item, index) => {
+      const candidate = typeof item === "object" && item ? item : {};
+      return priceBookItemSchema.parse({
+        ...candidate,
+        sortOrder: typeof candidate.sortOrder === "number" ? candidate.sortOrder : index * 10
+      });
+    }
+  );
 }
 async function handleOfficeSession(req, res) {
   try {
@@ -2062,6 +2463,59 @@ async function handleOfficePriceBook(req, res) {
       const items = Array.isArray(body.items) ? body.items.map((item) => priceBookItemSchema.parse(item)) : [];
       const saved = await replacePriceBookItems(items);
       sendJson(res, 200, { success: true, data: saved });
+      return;
+    }
+    sendJson(res, 405, { success: false, message: "Method not allowed" });
+  } catch (error) {
+    sendError(res, error);
+  }
+}
+async function handleOfficeChat(req, res) {
+  try {
+    assertOfficeSession(req);
+    const projectId = getQueryParam(req, "projectId");
+    if (!projectId) {
+      sendJson(res, 400, { success: false, message: "Project id is required" });
+      return;
+    }
+    if (req.method === "GET") {
+      const [messages, bundle] = await Promise.all([
+        listOfficeChatMessages(projectId),
+        getProjectBundle(projectId)
+      ]);
+      sendJson(res, 200, { success: true, data: { messages, bundle } });
+      return;
+    }
+    if (req.method === "POST") {
+      const body = officeChatRequestSchema.parse(await getJsonBody(req));
+      await createOfficeChatMessage(projectId, "user", body.message);
+      const startingBundle = await getProjectBundle(projectId);
+      const messageHistory = await listOfficeChatMessages(projectId);
+      const assistant = await generateOfficeAssistantResponse(startingBundle, messageHistory);
+      if (assistant.projectPatch && Object.keys(assistant.projectPatch).length > 0) {
+        await updateEstimateProject(projectId, assistant.projectPatch);
+      }
+      let takeoffsChanged = false;
+      let priceBookChanged = false;
+      if (assistant.takeoffs) {
+        await replaceProjectTakeoffs(projectId, normalizeAssistantTakeoffs(assistant.takeoffs));
+        takeoffsChanged = true;
+      }
+      if (assistant.priceBook) {
+        await replacePriceBookItems(normalizeAssistantPriceBook(assistant.priceBook));
+        priceBookChanged = true;
+      }
+      if (assistant.lineItems) {
+        await replaceProjectLineItems(projectId, normalizeAssistantLineItems(assistant.lineItems));
+      } else if (takeoffsChanged || priceBookChanged) {
+        await syncProjectLineItems(projectId);
+      }
+      await createOfficeChatMessage(projectId, "assistant", assistant.assistantMessage, assistant.effects);
+      const [messages, bundle] = await Promise.all([
+        listOfficeChatMessages(projectId),
+        getProjectBundle(projectId)
+      ]);
+      sendJson(res, 200, { success: true, data: { messages, bundle } });
       return;
     }
     sendJson(res, 405, { success: false, message: "Method not allowed" });
@@ -2342,6 +2796,8 @@ async function registerRoutes(app2) {
   app2.patch("/api/office/project", handleOfficeProject);
   app2.post("/api/office/upload", handleOfficeUpload);
   app2.post("/api/office/extract", handleOfficeExtract);
+  app2.get("/api/office/chat", handleOfficeChat);
+  app2.post("/api/office/chat", handleOfficeChat);
   app2.get("/api/office/takeoffs", handleOfficeTakeoffs);
   app2.patch("/api/office/takeoffs", handleOfficeTakeoffs);
   app2.get("/api/office/line-items", handleOfficeLineItems);

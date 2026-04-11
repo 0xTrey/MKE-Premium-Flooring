@@ -5,6 +5,9 @@ import type {
   EstimateLineItem,
   EstimateProject,
   ExtractedTakeoff,
+  OfficeChatEffect,
+  OfficeChatMessage,
+  OfficeChatRole,
   OfficeProjectBundle,
   PriceBookItem,
   ProjectFileRecord,
@@ -240,6 +243,17 @@ function mapQuote(row: Record<string, unknown>): QuoteSnapshot {
   };
 }
 
+function mapChatMessage(row: Record<string, unknown>): OfficeChatMessage {
+  return {
+    id: String(row.id),
+    projectId: String(row.project_id),
+    role: String(row.role) as OfficeChatRole,
+    content: String(row.content || ""),
+    effects: Array.isArray(row.effects_json) ? (row.effects_json as OfficeChatEffect[]) : [],
+    createdAt: toIsoString(row.created_at),
+  };
+}
+
 export async function ensureOfficeSchema() {
   if (officeSchemaReady) {
     return;
@@ -352,10 +366,20 @@ export async function ensureOfficeSchema() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS office_chat_messages (
+      id TEXT PRIMARY KEY,
+      project_id TEXT NOT NULL REFERENCES estimate_projects(id) ON DELETE CASCADE,
+      role TEXT NOT NULL,
+      content TEXT NOT NULL,
+      effects_json JSONB NOT NULL DEFAULT '[]'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     CREATE INDEX IF NOT EXISTS idx_project_files_project_id ON project_files(project_id);
     CREATE INDEX IF NOT EXISTS idx_takeoffs_project_id ON extracted_takeoffs(project_id);
     CREATE INDEX IF NOT EXISTS idx_line_items_project_id ON estimate_line_items(project_id);
     CREATE INDEX IF NOT EXISTS idx_quotes_project_id ON quote_snapshots(project_id);
+    CREATE INDEX IF NOT EXISTS idx_office_chat_messages_project_id ON office_chat_messages(project_id, created_at ASC);
   `);
 
   const existing = await pool.query("SELECT COUNT(*)::int AS count FROM price_book_items");
@@ -783,6 +807,30 @@ export async function createQuoteSnapshot(projectId: string, overrides?: { assum
   );
 
   return getLatestQuoteSnapshot(projectId);
+}
+
+export async function listOfficeChatMessages(projectId: string) {
+  await ensureOfficeSchema();
+  const result = await pool.query(
+    "SELECT * FROM office_chat_messages WHERE project_id = $1 ORDER BY created_at ASC",
+    [projectId],
+  );
+  return result.rows.map((row) => mapChatMessage(row));
+}
+
+export async function createOfficeChatMessage(projectId: string, role: OfficeChatRole, content: string, effects: OfficeChatEffect[] = []) {
+  await ensureOfficeSchema();
+  const id = randomUUID();
+  await pool.query(
+    `
+      INSERT INTO office_chat_messages (id, project_id, role, content, effects_json, created_at)
+      VALUES ($1, $2, $3, $4, $5::jsonb, NOW())
+    `,
+    [id, projectId, role, content, JSON.stringify(effects)],
+  );
+
+  const result = await pool.query("SELECT * FROM office_chat_messages WHERE id = $1 LIMIT 1", [id]);
+  return mapChatMessage(result.rows[0]);
 }
 
 export async function getProjectBundle(projectId: string): Promise<OfficeProjectBundle> {
