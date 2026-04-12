@@ -2,6 +2,8 @@
 .gitignore
 .vercel
 node_modules
+dist
+railway-dist
 .env
 .env.*
 *.log
