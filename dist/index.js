@@ -1241,7 +1241,7 @@ function buildDefaultLineItemsFromTakeoffs(project, takeoffs, priceBook) {
     const usesArea = item.pricingMode === "per_square_foot" || item.pricingMode === "per_box";
     const relevantTakeoff = selectedTakeoffs[0] || null;
     lineItems.push({
-      id: `generated-${item.id}`,
+      id: `generated-${project.id}-${item.id}`,
       sourceTakeoffId: relevantTakeoff?.id || null,
       priceBookItemId: item.id,
       name: materialHint && item.category === "material" ? `${item.name} (${materialHint.toUpperCase()})` : item.name,
@@ -2154,6 +2154,44 @@ ${xrefOffset}
 }
 
 // server/office/handlers.ts
+function getHeaderValue(req, name) {
+  const value = req.headers?.[name];
+  if (Array.isArray(value)) {
+    return value[0] || "";
+  }
+  return value ? String(value) : "";
+}
+function getOfficeRequestId(req) {
+  return getHeaderValue(req, "x-request-id") || getHeaderValue(req, "x-railway-request-id") || getHeaderValue(req, "fly-request-id") || randomUUID3();
+}
+function serializeError(error) {
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      stack: error.stack || ""
+    };
+  }
+  return {
+    name: "UnknownError",
+    message: typeof error === "string" ? error : "Internal server error",
+    stack: ""
+  };
+}
+function logOfficeEvent(level, event, context) {
+  const payload = {
+    scope: "office",
+    event,
+    ...context,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  const line = JSON.stringify(payload);
+  if (level === "error") {
+    console.error(line);
+    return;
+  }
+  console.info(line);
+}
 function getQueryParam(req, name) {
   const fromQuery = req.query?.[name];
   if (Array.isArray(fromQuery)) {
@@ -2183,12 +2221,13 @@ async function getJsonBody(req) {
 function sendJson(res, status, body) {
   res.status(status).json(body);
 }
-function sendError(res, error) {
+function sendError(res, error, context) {
   const statusCode = typeof error === "object" && error && "statusCode" in error && typeof error.statusCode === "number" ? error.statusCode : 500;
   const message = error instanceof Error ? error.message : "Internal server error";
   sendJson(res, statusCode, {
     success: false,
-    message
+    message,
+    requestId: context?.requestId || void 0
   });
 }
 function getExtension(filename) {
@@ -2321,20 +2360,39 @@ async function handleOfficeProject(req, res) {
   }
 }
 async function handleOfficeUpload(req, res) {
+  const requestId = getOfficeRequestId(req);
+  let projectId = "";
+  let phase = "session";
+  let uploadSummaries = [];
+  let storedFileCount = 0;
   try {
     assertOfficeSession(req);
-    const projectId = getQueryParam(req, "projectId");
+    projectId = getQueryParam(req, "projectId");
     if (!projectId) {
       sendJson(res, 400, { success: false, message: "Project id is required" });
       return;
     }
+    phase = "parse_multipart";
     const { files } = await parseMultipartRequest(req);
     if (!files.length) {
       sendJson(res, 400, { success: false, message: "At least one file is required" });
       return;
     }
+    uploadSummaries = files.map((file) => ({
+      name: file.filename,
+      mimeType: file.mimeType,
+      sizeBytes: file.buffer.length
+    }));
+    logOfficeEvent("info", "upload.start", {
+      requestId,
+      projectId,
+      fileCount: files.length,
+      totalBytes: uploadSummaries.reduce((sum, file) => sum + file.sizeBytes, 0),
+      files: uploadSummaries
+    });
     const storedFiles = [];
     for (const file of files) {
+      phase = "extract_file";
       const parentId = randomUUID3();
       const fileKind = detectFileKind(file.filename, file.mimeType);
       const text2 = await extractTextFromFile(file.filename, file.mimeType, file.buffer);
@@ -2352,7 +2410,9 @@ async function handleOfficeUpload(req, res) {
         extractionNotes: text2.trim() ? "Machine-readable content extracted." : "No reliable text extracted automatically."
       });
       if (fileKind === "packet") {
+        phase = "unzip_packet";
         for (const entry of unzipBuffer(file.buffer)) {
+          phase = "extract_packet_entry";
           const entryKind = detectFileKind(entry.filename, "application/octet-stream");
           const entryText = await extractTextFromFile(entry.filename, "application/octet-stream", entry.buffer);
           storedFiles.push({
@@ -2371,11 +2431,30 @@ async function handleOfficeUpload(req, res) {
         }
       }
     }
+    storedFileCount = storedFiles.length;
+    phase = "store_project_files";
     await storeProjectFiles(projectId, storedFiles);
+    phase = "run_project_extraction";
     const bundle = await runProjectExtraction(projectId);
+    logOfficeEvent("info", "upload.success", {
+      requestId,
+      projectId,
+      fileCount: files.length,
+      storedFileCount,
+      takeoffCount: bundle.takeoffs.length,
+      lineItemCount: bundle.lineItems.length
+    });
     sendJson(res, 200, { success: true, data: bundle });
   } catch (error) {
-    sendError(res, error);
+    logOfficeEvent("error", "upload.failed", {
+      requestId,
+      projectId,
+      phase,
+      storedFileCount,
+      files: uploadSummaries,
+      error: serializeError(error)
+    });
+    sendError(res, error, { requestId });
   }
 }
 async function handleOfficeExtract(req, res) {

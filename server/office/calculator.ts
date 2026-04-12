@@ -70,7 +70,7 @@ function nextSortOrder(index: number) {
 }
 
 export function buildDefaultLineItemsFromTakeoffs(
-  project: Pick<EstimateProject, "wastePercent">,
+  project: Pick<EstimateProject, "id" | "wastePercent">,
   takeoffs: ExtractedTakeoff[],
   priceBook: PriceBookItem[],
 ): EstimateLineItem[] {
@@ -85,7 +85,7 @@ export function buildDefaultLineItemsFromTakeoffs(
     const relevantTakeoff = selectedTakeoffs[0] || null;
 
     lineItems.push({
-      id: `generated-${item.id}`,
+      id: `generated-${project.id}-${item.id}`,
       sourceTakeoffId: relevantTakeoff?.id || null,
       priceBookItemId: item.id,
       name: materialHint && item.category === "material" ? `${item.name} (${materialHint.toUpperCase()})` : item.name,

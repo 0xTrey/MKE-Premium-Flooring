@@ -60,6 +60,56 @@ type ResponseLike = {
   end: (body?: Buffer | string) => void;
 };
 
+type OfficeLogContext = Record<string, unknown>;
+
+function getHeaderValue(req: RequestLike, name: string) {
+  const value = req.headers?.[name];
+  if (Array.isArray(value)) {
+    return value[0] || "";
+  }
+  return value ? String(value) : "";
+}
+
+function getOfficeRequestId(req: RequestLike) {
+  return (
+    getHeaderValue(req, "x-request-id") ||
+    getHeaderValue(req, "x-railway-request-id") ||
+    getHeaderValue(req, "fly-request-id") ||
+    randomUUID()
+  );
+}
+
+function serializeError(error: unknown) {
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      stack: error.stack || "",
+    };
+  }
+
+  return {
+    name: "UnknownError",
+    message: typeof error === "string" ? error : "Internal server error",
+    stack: "",
+  };
+}
+
+function logOfficeEvent(level: "info" | "error", event: string, context: OfficeLogContext) {
+  const payload = {
+    scope: "office",
+    event,
+    ...context,
+    timestamp: new Date().toISOString(),
+  };
+  const line = JSON.stringify(payload);
+  if (level === "error") {
+    console.error(line);
+    return;
+  }
+  console.info(line);
+}
+
 function getQueryParam(req: RequestLike, name: string) {
   const fromQuery = req.query?.[name];
   if (Array.isArray(fromQuery)) {
@@ -96,7 +146,7 @@ function sendJson(res: ResponseLike, status: number, body: unknown) {
   res.status(status).json(body);
 }
 
-function sendError(res: ResponseLike, error: unknown) {
+function sendError(res: ResponseLike, error: unknown, context?: { requestId?: string }) {
   const statusCode = typeof error === "object" && error && "statusCode" in error && typeof error.statusCode === "number"
     ? error.statusCode
     : 500;
@@ -104,6 +154,7 @@ function sendError(res: ResponseLike, error: unknown) {
   sendJson(res, statusCode, {
     success: false,
     message,
+    requestId: context?.requestId || undefined,
   });
 }
 
@@ -257,23 +308,44 @@ export async function handleOfficeProject(req: RequestLike, res: ResponseLike) {
 }
 
 export async function handleOfficeUpload(req: RequestLike, res: ResponseLike) {
+  const requestId = getOfficeRequestId(req);
+  let projectId = "";
+  let phase = "session";
+  let uploadSummaries: Array<{ name: string; mimeType: string; sizeBytes: number }> = [];
+  let storedFileCount = 0;
   try {
     assertOfficeSession(req);
-    const projectId = getQueryParam(req, "projectId");
+    projectId = getQueryParam(req, "projectId");
     if (!projectId) {
       sendJson(res, 400, { success: false, message: "Project id is required" });
       return;
     }
 
+    phase = "parse_multipart";
     const { files } = await parseMultipartRequest(req);
     if (!files.length) {
       sendJson(res, 400, { success: false, message: "At least one file is required" });
       return;
     }
 
+    uploadSummaries = files.map((file) => ({
+      name: file.filename,
+      mimeType: file.mimeType,
+      sizeBytes: file.buffer.length,
+    }));
+
+    logOfficeEvent("info", "upload.start", {
+      requestId,
+      projectId,
+      fileCount: files.length,
+      totalBytes: uploadSummaries.reduce((sum, file) => sum + file.sizeBytes, 0),
+      files: uploadSummaries,
+    });
+
     const storedFiles: StoredFileInput[] = [];
 
     for (const file of files) {
+      phase = "extract_file";
       const parentId = randomUUID();
       const fileKind = detectFileKind(file.filename, file.mimeType);
       const text = await extractTextFromFile(file.filename, file.mimeType, file.buffer);
@@ -293,7 +365,9 @@ export async function handleOfficeUpload(req: RequestLike, res: ResponseLike) {
       });
 
       if (fileKind === "packet") {
+        phase = "unzip_packet";
         for (const entry of unzipBuffer(file.buffer)) {
+          phase = "extract_packet_entry";
           const entryKind = detectFileKind(entry.filename, "application/octet-stream");
           const entryText = await extractTextFromFile(entry.filename, "application/octet-stream", entry.buffer);
           storedFiles.push({
@@ -313,11 +387,31 @@ export async function handleOfficeUpload(req: RequestLike, res: ResponseLike) {
       }
     }
 
+    storedFileCount = storedFiles.length;
+    phase = "store_project_files";
     await storeProjectFiles(projectId, storedFiles);
+
+    phase = "run_project_extraction";
     const bundle = await runProjectExtraction(projectId);
+    logOfficeEvent("info", "upload.success", {
+      requestId,
+      projectId,
+      fileCount: files.length,
+      storedFileCount,
+      takeoffCount: bundle.takeoffs.length,
+      lineItemCount: bundle.lineItems.length,
+    });
     sendJson(res, 200, { success: true, data: bundle });
   } catch (error) {
-    sendError(res, error);
+    logOfficeEvent("error", "upload.failed", {
+      requestId,
+      projectId,
+      phase,
+      storedFileCount,
+      files: uploadSummaries,
+      error: serializeError(error),
+    });
+    sendError(res, error, { requestId });
   }
 }
 
