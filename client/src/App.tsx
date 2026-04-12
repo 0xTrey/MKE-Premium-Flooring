@@ -9,11 +9,13 @@ import OfficeLoginPage from "@/pages/office-login";
 import OfficeProjectsPage from "@/pages/office-projects";
 import OfficeProjectDetailPage from "@/pages/office-project-detail";
 import OfficeQuotePage from "@/pages/office-quote";
+import OfficeDesignPreviewPage from "@/pages/office-design-preview";
 
 function Router() {
   return (
     <Switch>
       <Route path="/office/login" component={OfficeLoginPage} />
+      <Route path="/office/design-preview" component={OfficeDesignPreviewPage} />
       <Route path="/office/projects/:projectId/quote">
         {(params) => <OfficeQuotePage projectId={params.projectId} />}
       </Route>
