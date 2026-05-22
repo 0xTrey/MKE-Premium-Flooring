@@ -34,20 +34,20 @@ export function Hero() {
           Quality Flooring.<br />Affordable Prices.
         </h1>
 
-        <p className="mx-auto mb-8 max-w-3xl text-base font-medium text-white/90 sm:text-lg lg:mb-12 lg:text-2xl">
+        <p className="mx-auto mb-8 max-w-[32rem] px-1 text-base font-medium leading-relaxed text-white/90 sm:text-lg lg:mb-12 lg:max-w-3xl lg:text-2xl">
           Serving Milwaukee Metro with premium flooring and tile installation.
         </p>
 
-        <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <div className="mx-auto flex w-full max-w-sm flex-col items-stretch justify-center gap-3 px-1 sm:max-w-none sm:flex-row sm:items-center sm:gap-4 sm:px-0">
           <Button
             asChild
             size="lg"
-            className="w-full max-w-[calc(100vw-2rem)] bg-ring px-4 text-sm text-white border-ring font-heading font-semibold min-[375px]:text-base sm:w-auto sm:text-lg"
+            className="box-border w-full max-w-full bg-ring px-4 text-sm text-white border-ring font-heading font-semibold min-[375px]:text-base sm:w-auto sm:text-lg"
             data-testid="button-hero-call"
           >
-            <a href="tel:+14142751889" className="flex items-center justify-center gap-2">
+            <a href="tel:+141****1889" className="flex min-w-0 items-center justify-center gap-2">
               <Phone className="w-5 h-5" />
-              Call (414) 275-1889
+              <span className="truncate">Call (414) 275-1889</span>
             </a>
           </Button>
 
@@ -55,7 +55,7 @@ export function Hero() {
             onClick={scrollToContact}
             size="lg"
             variant="outline"
-            className="w-full max-w-[calc(100vw-2rem)] border-2 border-white/30 bg-white/10 px-4 text-sm text-white backdrop-blur-md font-heading font-semibold min-[375px]:text-base sm:w-auto sm:text-lg"
+            className="box-border w-full max-w-full border-2 border-white/30 bg-white/10 px-4 text-sm text-white backdrop-blur-md font-heading font-semibold min-[375px]:text-base sm:w-auto sm:text-lg"
             data-testid="button-hero-contact"
           >
             <Mail className="mr-2 h-5 w-5" />
