@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import type { Photo } from "@shared/schema";
 import { Pause, Play } from "lucide-react";
 import { Button } from "./ui/button";
@@ -77,11 +76,7 @@ export function Gallery() {
   const animationRef = useRef<number | null>(null);
   const scrollSpeedRef = useRef(0.5);
 
-  const { data, isLoading } = useQuery<{ success: boolean; data: Photo[] }>({
-    queryKey: ["/api/photos"],
-  });
-
-  const photos = data?.data?.length ? data.data : staticPhotos;
+  const photos = staticPhotos;
   const duplicatedPhotos = [...photos, ...photos];
 
   useEffect(() => {
@@ -126,60 +121,47 @@ export function Gallery() {
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-4 overflow-hidden">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="flex-shrink-0 w-64 h-64 bg-primary-foreground/10 rounded-lg animate-pulse"
-              />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="relative">
-          <div
-            ref={scrollRef}
-            className="flex gap-4 overflow-x-auto px-4 sm:px-6 lg:px-8 md:overflow-x-hidden"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            data-testid="gallery-carousel"
-          >
-            {duplicatedPhotos.map((photo, index) => (
-              <div
-                key={`${photo.id}-${index}`}
-                className="group relative h-56 w-[78vw] max-w-72 flex-shrink-0 overflow-hidden rounded-lg sm:h-64 sm:w-64 md:h-72 md:w-72 lg:h-80 lg:w-80"
-                data-testid={`img-gallery-${index}`}
-              >
-                <img
-                  src={photoAssets[photo.filename]}
-                  alt={photo.description}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
-                  <span className="text-white font-heading font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    {photo.category}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 flex justify-center">
-            <Button
-              size="icon"
-              variant="outline"
-              className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground"
-              onClick={() => setIsPaused(!isPaused)}
-              aria-label={isPaused ? "Play carousel" : "Pause carousel"}
-              data-testid="button-pause-carousel"
+      <div className="relative">
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto px-4 sm:px-6 lg:px-8 md:overflow-x-hidden"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          data-testid="gallery-carousel"
+        >
+          {duplicatedPhotos.map((photo, index) => (
+            <div
+              key={`${photo.id}-${index}`}
+              className="group relative h-56 w-[78vw] max-w-72 flex-shrink-0 overflow-hidden rounded-lg sm:h-64 sm:w-64 md:h-72 md:w-72 lg:h-80 lg:w-80"
+              data-testid={`img-gallery-${index}`}
             >
-              {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
-            </Button>
-          </div>
+              <img
+                src={photoAssets[photo.filename]}
+                alt={photo.description}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-end p-4">
+                <span className="text-white font-heading font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {photo.category}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
-      )}
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 flex justify-center">
+          <Button
+            size="icon"
+            variant="outline"
+            className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground"
+            onClick={() => setIsPaused(!isPaused)}
+            aria-label={isPaused ? "Play carousel" : "Pause carousel"}
+            data-testid="button-pause-carousel"
+          >
+            {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+          </Button>
+        </div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mt-12">
