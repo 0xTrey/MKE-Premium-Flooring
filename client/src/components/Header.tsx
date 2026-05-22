@@ -60,11 +60,10 @@ export function Header() {
           <Button
             onClick={scrollToContact}
             size="default"
-            className="h-10 shrink-0 bg-ring px-3 text-sm font-heading font-semibold text-white border-ring sm:h-11 sm:px-4 sm:text-base"
+            className="hidden h-11 shrink-0 bg-ring px-4 font-heading font-semibold text-white border-ring sm:inline-flex"
             data-testid="button-header-cta"
           >
-            <span className="hidden sm:inline">Free Estimate</span>
-            <span className="sm:hidden">Estimate</span>
+            Free Estimate
           </Button>
         </div>
       </div>

@@ -30,7 +30,7 @@ export function Hero() {
           </div>
         </div>
 
-        <h1 className="mb-5 text-4xl font-heading font-bold leading-tight text-white text-balance sm:text-5xl lg:mb-6 lg:text-7xl">
+        <h1 className="mx-auto mb-5 max-w-[10.5ch] text-3xl font-heading font-bold leading-[1.08] text-white text-balance min-[375px]:text-4xl sm:max-w-none sm:text-5xl lg:mb-6 lg:text-7xl">
           Quality Flooring.<br />Affordable Prices.
         </h1>
 
@@ -42,7 +42,7 @@ export function Hero() {
           <Button
             asChild
             size="lg"
-            className="w-full bg-ring text-base text-white border-ring font-heading font-semibold sm:w-auto sm:text-lg"
+            className="w-full max-w-[calc(100vw-2rem)] bg-ring px-4 text-sm text-white border-ring font-heading font-semibold min-[375px]:text-base sm:w-auto sm:text-lg"
             data-testid="button-hero-call"
           >
             <a href="tel:+14142751889" className="flex items-center justify-center gap-2">
@@ -55,7 +55,7 @@ export function Hero() {
             onClick={scrollToContact}
             size="lg"
             variant="outline"
-            className="w-full border-2 border-white/30 bg-white/10 text-base text-white backdrop-blur-md font-heading font-semibold sm:w-auto sm:text-lg"
+            className="w-full max-w-[calc(100vw-2rem)] border-2 border-white/30 bg-white/10 px-4 text-sm text-white backdrop-blur-md font-heading font-semibold min-[375px]:text-base sm:w-auto sm:text-lg"
             data-testid="button-hero-contact"
           >
             <Mail className="mr-2 h-5 w-5" />
