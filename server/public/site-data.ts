@@ -1,8 +1,17 @@
 import { randomUUID } from "crypto";
-import { Pool, neonConfig } from "@neondatabase/serverless";
-import ws from "ws";
 
-neonConfig.webSocketConstructor = ws;
+// Lazy-load Neon/ws only when a database connection is actually needed
+// This avoids FUNCTION_INVOCATION_FAILED in serverless environments
+async function createPool(connectionString: string) {
+  const { Pool, neonConfig } = await import("@neondatabase/serverless");
+  try {
+    const { default: ws } = await import("ws");
+    neonConfig.webSocketConstructor = ws;
+  } catch {
+    // ws not available in this environment — Neon will use fetch instead
+  }
+  return new Pool({ connectionString });
+}
 
 type ContactSubmission = {
   id: string;
@@ -53,18 +62,18 @@ const FALLBACK_FILENAMES = [
   "PE27_1760449066500.jpg",
   "PE28_1760449066500.jpg",
 ];
-let publicPool: Pool | null = null;
+let publicPool: any = null;
 
 function hasDatabase() {
   return Boolean(process.env.DATABASE_URL);
 }
 
-function getPool() {
+async function getPool() {
   if (!process.env.DATABASE_URL) {
     throw new Error("DATABASE_URL is not set");
   }
   if (!publicPool) {
-    publicPool = new Pool({ connectionString: process.env.DATABASE_URL });
+    publicPool = await createPool(process.env.DATABASE_URL);
   }
   return publicPool;
 }
@@ -106,7 +115,8 @@ export function validateContactSubmission(input: ReturnType<typeof normalizeCont
 
 export async function createContactSubmission(input: ReturnType<typeof normalizeContactBody>) {
   if (hasDatabase()) {
-    const result = await getPool().query(
+    const pool = await getPool();
+    const result = await pool.query(
       `
         INSERT INTO contact_submissions (name, phone, email, project_type, location)
         VALUES ($1, $2, $3, $4, $5)
@@ -136,7 +146,8 @@ export async function createContactSubmission(input: ReturnType<typeof normalize
 
 export async function listContactSubmissions() {
   if (hasDatabase()) {
-    const result = await getPool().query(
+    const pool = await getPool();
+    const result = await pool.query(
       `
         SELECT
           id,
@@ -158,22 +169,27 @@ export async function listContactSubmissions() {
 
 export async function listPhotos() {
   if (hasDatabase()) {
-    const result = await getPool().query(
-      `
-        SELECT
-          id,
-          filename,
-          category,
-          description,
-          display_order AS "displayOrder",
-          created_at AS "createdAt"
-        FROM photos
-        ORDER BY display_order ASC
-      `,
-    );
+    try {
+      const pool = await getPool();
+      const result = await pool.query(
+        `
+          SELECT
+            id,
+            filename,
+            category,
+            description,
+            display_order AS "displayOrder",
+            created_at AS "createdAt"
+          FROM photos
+          ORDER BY display_order ASC
+        `,
+      );
 
-    if (result.rows.length) {
-      return result.rows as PhotoRecord[];
+      if (result.rows.length) {
+        return result.rows as PhotoRecord[];
+      }
+    } catch (error) {
+      console.warn("Falling back to bundled project photos:", error);
     }
   }
 

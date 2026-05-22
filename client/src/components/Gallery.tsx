@@ -62,6 +62,15 @@ const photoAssets: Record<string, string> = {
   "PE28_1760449066500.jpg": pe28,
 };
 
+const staticPhotos: Photo[] = Object.keys(photoAssets).map((filename, index) => ({
+  id: `static-${index + 1}`,
+  filename,
+  category: filename.startsWith("Before") ? "Before and After" : "Project Showcase",
+  description: `P&E Premium Flooring project photo ${index + 1}`,
+  displayOrder: index + 1,
+  createdAt: new Date(0),
+}));
+
 export function Gallery() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
@@ -72,8 +81,8 @@ export function Gallery() {
     queryKey: ["/api/photos"],
   });
 
-  const photos = data?.data || [];
-  const duplicatedPhotos = photos.length > 0 ? [...photos, ...photos] : [];
+  const photos = data?.data?.length ? data.data : staticPhotos;
+  const duplicatedPhotos = [...photos, ...photos];
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
