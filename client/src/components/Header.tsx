@@ -28,22 +28,30 @@ export function Header() {
           : "bg-background"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
-          <div className="flex-shrink-0">
-            <h1 className="text-xl lg:text-2xl font-heading font-bold text-primary">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex min-h-16 items-center justify-between gap-3 py-3 sm:min-h-20">
+          <div className="min-w-0 flex-1">
+            <h1 className="truncate text-base font-heading font-bold leading-tight text-primary sm:text-xl sm:whitespace-normal lg:text-2xl">
               P&E Premium Flooring
             </h1>
-          </div>
-
-          <div className="hidden md:flex items-center gap-4">
             <a
               href="tel:+14142751889"
-              className="flex items-center gap-2 text-foreground hover:text-primary transition-colors"
+              className="mt-1 inline-flex items-center gap-1.5 text-sm font-medium text-foreground/80 transition-colors hover:text-primary md:hidden"
+              data-testid="link-phone-header-mobile"
+            >
+              <Phone className="h-4 w-4" />
+              <span>(414) 275-1889</span>
+            </a>
+          </div>
+
+          <div className="hidden items-center gap-4 md:flex">
+            <a
+              href="tel:+14142751889"
+              className="flex items-center gap-2 text-foreground transition-colors hover:text-primary"
               data-testid="link-phone-header"
             >
-              <Phone className="w-5 h-5" />
-              <span className="font-heading font-semibold text-lg">
+              <Phone className="h-5 w-5" />
+              <span className="font-heading text-lg font-semibold">
                 (414) 275-1889
               </span>
             </a>
@@ -52,11 +60,11 @@ export function Header() {
           <Button
             onClick={scrollToContact}
             size="default"
-            className="bg-ring text-white border-ring font-heading font-semibold"
+            className="h-10 shrink-0 bg-ring px-3 text-sm font-heading font-semibold text-white border-ring sm:h-11 sm:px-4 sm:text-base"
             data-testid="button-header-cta"
           >
-            <span className="hidden sm:inline">Call for a Free Estimate</span>
-            <span className="sm:hidden">Free Estimate</span>
+            <span className="hidden sm:inline">Free Estimate</span>
+            <span className="sm:hidden">Estimate</span>
           </Button>
         </div>
       </div>

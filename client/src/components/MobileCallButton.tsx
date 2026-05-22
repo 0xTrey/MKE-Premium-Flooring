@@ -3,19 +3,20 @@ import { Button } from "@/components/ui/button";
 
 export function MobileCallButton() {
   return (
-    <div className="fixed bottom-6 right-6 z-50 md:hidden" data-testid="mobile-call-container">
+    <div className="fixed inset-x-4 bottom-4 z-50 md:hidden" data-testid="mobile-call-container">
       <Button
         asChild
-        size="icon"
-        className="bg-ring text-white border-ring shadow-xl rounded-full"
+        size="lg"
+        className="h-14 w-full rounded-full bg-ring text-base font-heading font-semibold text-white shadow-xl border-ring"
       >
         <a 
           href="tel:+14142751889" 
-          aria-label="Call us" 
-          className="flex items-center justify-center"
+          aria-label="Call P&E Premium Flooring" 
+          className="flex items-center justify-center gap-2"
           data-testid="button-mobile-call"
         >
           <Phone className="w-6 h-6" />
+          Call for Free Estimate
         </a>
       </Button>
     </div>

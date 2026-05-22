@@ -105,20 +105,20 @@ export function Gallery() {
   const handleMouseLeave = () => setIsPaused(false);
 
   return (
-    <section className="py-16 lg:py-24 bg-primary text-primary-foreground" id="gallery">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <section className="py-14 sm:py-16 lg:py-24 bg-primary text-primary-foreground" id="gallery">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-5xl font-heading font-semibold mb-4">
+          <h2 className="text-3xl lg:text-5xl font-heading font-semibold leading-tight mb-4">
             Recent Work
           </h2>
-          <p className="text-lg lg:text-xl text-primary-foreground/80 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-primary-foreground/80 max-w-3xl mx-auto">
             Explore our portfolio of completed projects throughout Milwaukee Metro.
           </p>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-4 overflow-hidden">
             {[...Array(6)].map((_, i) => (
               <div
@@ -132,7 +132,7 @@ export function Gallery() {
         <div className="relative">
           <div
             ref={scrollRef}
-            className="flex gap-4 overflow-x-hidden px-6 lg:px-8"
+            className="flex gap-4 overflow-x-auto px-4 sm:px-6 lg:px-8 md:overflow-x-hidden"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             data-testid="gallery-carousel"
@@ -140,7 +140,7 @@ export function Gallery() {
             {duplicatedPhotos.map((photo, index) => (
               <div
                 key={`${photo.id}-${index}`}
-                className="group relative flex-shrink-0 w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 overflow-hidden rounded-lg"
+                className="group relative h-56 w-[78vw] max-w-72 flex-shrink-0 overflow-hidden rounded-lg sm:h-64 sm:w-64 md:h-72 md:w-72 lg:h-80 lg:w-80"
                 data-testid={`img-gallery-${index}`}
               >
                 <img
@@ -157,7 +157,7 @@ export function Gallery() {
             ))}
           </div>
 
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 mt-6 flex justify-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 flex justify-center">
             <Button
               size="icon"
               variant="outline"
@@ -172,7 +172,7 @@ export function Gallery() {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mt-12">
           <p className="text-primary-foreground/80 text-lg">
             Follow us on{" "}

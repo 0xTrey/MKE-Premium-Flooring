@@ -65,18 +65,18 @@ export function Contact() {
 
   return (
     <>
-      <section className="py-16 lg:py-24 bg-card" id="contact">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <section className="py-14 sm:py-16 lg:py-24 bg-card" id="contact">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-5xl font-heading font-semibold text-foreground mb-4">
+            <h2 className="text-3xl lg:text-5xl font-heading font-semibold leading-tight text-foreground mb-4">
               Get Your Free Estimate
             </h2>
-            <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
               Ready to transform your space? Contact us today for a free, no-obligation estimate.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
             <div>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -188,7 +188,7 @@ export function Contact() {
 
           <div className="space-y-8">
             <div>
-              <h3 className="text-2xl font-heading font-semibold text-foreground mb-6">
+              <h3 className="text-xl sm:text-2xl font-heading font-semibold text-foreground mb-6">
                 Contact Information
               </h3>
               <div className="space-y-6">
@@ -239,7 +239,7 @@ export function Contact() {
             </div>
 
             <Card className="bg-primary/5 border-primary/10 overflow-visible">
-              <CardContent className="p-8">
+              <CardContent className="p-5 sm:p-8">
                 <h4 className="text-xl font-heading font-semibold text-foreground mb-4">
                   Why Choose Us?
                 </h4>
