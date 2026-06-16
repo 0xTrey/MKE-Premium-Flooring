@@ -23,7 +23,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Phone, Mail, MapPin, CircleCheckBig } from "lucide-react";
 
@@ -44,7 +43,21 @@ export function Contact() {
 
   const mutation = useMutation({
     mutationFn: async (data: InsertContactSubmission) => {
-      return await apiRequest("POST", "/api/contact", data);
+      const subject = encodeURIComponent(`Free estimate request from ${data.name}`);
+      const body = encodeURIComponent(
+        [
+          `Name: ${data.name}`,
+          `Phone: ${data.phone}`,
+          `Email: ${data.email || "Not provided"}`,
+          `Location: ${data.location || "Not provided"}`,
+          "",
+          "Project Type & Overview:",
+          data.projectType,
+        ].join("\n")
+      );
+
+      window.location.href = `mailto:Pepremiumflooring@gmail.com?subject=${subject}&body=${body}`;
+      return true;
     },
     onSuccess: () => {
       setShowSuccessDialog(true);
@@ -273,11 +286,11 @@ export function Contact() {
           <DialogHeader className="items-center text-center gap-3">
             <CircleCheckBig className="h-14 w-14 text-green-600" />
             <DialogTitle className="text-2xl sm:text-3xl font-heading">
-              Message Sent Successfully
+              Email Draft Opened
             </DialogTitle>
             <DialogDescription className="text-base sm:text-lg max-w-md">
-              Thanks for reaching out. We received your request and will contact you within 24
-              hours to discuss your flooring project.
+              Your email app should open with the estimate request filled in. If it does not,
+              please call (414) 275-1889 or email Pepremiumflooring@gmail.com directly.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-center mt-2">

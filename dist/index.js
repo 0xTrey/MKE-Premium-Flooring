@@ -2665,9 +2665,15 @@ async function handleOfficeQuote(req, res) {
 
 // server/public/site-data.ts
 import { randomUUID as randomUUID4 } from "crypto";
-import { Pool as Pool2, neonConfig as neonConfig2 } from "@neondatabase/serverless";
-import ws2 from "ws";
-neonConfig2.webSocketConstructor = ws2;
+async function createPool(connectionString) {
+  const { Pool: Pool2, neonConfig: neonConfig2 } = await import("@neondatabase/serverless");
+  try {
+    const { default: ws2 } = await import("ws");
+    neonConfig2.webSocketConstructor = ws2;
+  } catch {
+  }
+  return new Pool2({ connectionString });
+}
 var memorySubmissions = [];
 var FALLBACK_FILENAMES = [
   "PE1_1760447738195.jpg",
@@ -2702,12 +2708,12 @@ var publicPool = null;
 function hasDatabase() {
   return Boolean(process.env.DATABASE_URL);
 }
-function getPool() {
+async function getPool() {
   if (!process.env.DATABASE_URL) {
     throw new Error("DATABASE_URL is not set");
   }
   if (!publicPool) {
-    publicPool = new Pool2({ connectionString: process.env.DATABASE_URL });
+    publicPool = await createPool(process.env.DATABASE_URL);
   }
   return publicPool;
 }
@@ -2742,7 +2748,8 @@ function validateContactSubmission(input) {
 }
 async function createContactSubmission(input) {
   if (hasDatabase()) {
-    const result = await getPool().query(
+    const pool2 = await getPool();
+    const result = await pool2.query(
       `
         INSERT INTO contact_submissions (name, phone, email, project_type, location)
         VALUES ($1, $2, $3, $4, $5)
@@ -2769,7 +2776,8 @@ async function createContactSubmission(input) {
 }
 async function listContactSubmissions() {
   if (hasDatabase()) {
-    const result = await getPool().query(
+    const pool2 = await getPool();
+    const result = await pool2.query(
       `
         SELECT
           id,
@@ -2789,21 +2797,26 @@ async function listContactSubmissions() {
 }
 async function listPhotos() {
   if (hasDatabase()) {
-    const result = await getPool().query(
-      `
-        SELECT
-          id,
-          filename,
-          category,
-          description,
-          display_order AS "displayOrder",
-          created_at AS "createdAt"
-        FROM photos
-        ORDER BY display_order ASC
-      `
-    );
-    if (result.rows.length) {
-      return result.rows;
+    try {
+      const pool2 = await getPool();
+      const result = await pool2.query(
+        `
+          SELECT
+            id,
+            filename,
+            category,
+            description,
+            display_order AS "displayOrder",
+            created_at AS "createdAt"
+          FROM photos
+          ORDER BY display_order ASC
+        `
+      );
+      if (result.rows.length) {
+        return result.rows;
+      }
+    } catch (error) {
+      console.warn("Falling back to bundled project photos:", error);
     }
   }
   return fallbackPhotos();
