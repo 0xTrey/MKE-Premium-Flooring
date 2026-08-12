@@ -1,0 +1,21 @@
+{
+  "vercelProjectId": "prj_i2JrAi8oKyqZjjx4933ghgxk5VsB",
+  "vercelDeploymentId": "dpl_95Z1q8QmzTQd1j6SyGryFmfi6A1a",
+  "sourceCommit": "743d03079d2a570703d7fd7dde5e71f6c13b1372",
+  "sourceManifest": "recovery/vercel-dpl_95Z1q8QmzTQd1j6SyGryFmfi6A1a/source-manifest.json",
+  "staticFiles": 31,
+  "publicIndex": {
+    "path": "index.html",
+    "sha256": "6f3f4dd3e4f76e7a6afa528a1ecc0adb9a66d59ef8f2dd1ea06b7052a8859422"
+  },
+  "recoveredBundles": [
+    {
+      "path": "assets/index-B-hcmYCV.js",
+      "sha256": "1f71db1096ce5400749ef1f2a1d23ef1de1713ca12a11d82266545b2fcd966d5"
+    },
+    {
+      "path": "assets/index-f4zIbu-N.css",
+      "sha256": "00f53aa8f10b01efe66eae1e1123b7dbe9bebef75187b4ad1efa2ef6569e8c4a"
+    }
+  ]
+}
