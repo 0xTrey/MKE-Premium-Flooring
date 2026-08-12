@@ -1,0 +1,948 @@
+{
+  "deploymentId": "dpl_95Z1q8QmzTQd1j6SyGryFmfi6A1a",
+  "projectId": "prj_i2JrAi8oKyqZjjx4933ghgxk5VsB",
+  "sourceCommit": "743d03079d2a570703d7fd7dde5e71f6c13b1372",
+  "sourceFiles": 235,
+  "files": [
+    {
+      "path": ".replit",
+      "sha1": "627b9d381d5b9b3c073a18cf40834eefad4d7cde"
+    },
+    {
+      "path": "api/contact.ts",
+      "sha1": "b2075e957d2c6d5b554121623fb7c2a1f7d48ea5"
+    },
+    {
+      "path": "api/office/extract.ts",
+      "sha1": "39cba301a5e0f20de6de4d57d73a7011122cb3c2"
+    },
+    {
+      "path": "api/office/file.ts",
+      "sha1": "476ff713b2a5f2511c23a34d983161aac68f05bc"
+    },
+    {
+      "path": "api/office/line-items.ts",
+      "sha1": "773f17370c1b4a7b9032c168ef781079cebe0e6d"
+    },
+    {
+      "path": "api/office/login.ts",
+      "sha1": "9a94398aa6e7f3939a5a4e797c40971792145370"
+    },
+    {
+      "path": "api/office/logout.ts",
+      "sha1": "fd5c72a8b32edeab6a732f17c967fa978c0f3590"
+    },
+    {
+      "path": "api/office/price-book.ts",
+      "sha1": "58970cd1334d06902c7ea5ae4172827064c84286"
+    },
+    {
+      "path": "api/office/project.ts",
+      "sha1": "244035e5cb59afbd3e2ad21b27dbb5c3f5c8c1c1"
+    },
+    {
+      "path": "api/office/projects.ts",
+      "sha1": "ad4232d5c055a94350b912829ef242746e5bab78"
+    },
+    {
+      "path": "api/office/quote.ts",
+      "sha1": "e923ad073a384c0814263818f2ace24c0f096129"
+    },
+    {
+      "path": "api/office/session.ts",
+      "sha1": "f30c4820f360ecb7fe83a09fbedd1e22a195c72c"
+    },
+    {
+      "path": "api/office/takeoffs.ts",
+      "sha1": "8e0b0a6d40218eddce1c74081aa733ed2a82f459"
+    },
+    {
+      "path": "api/office/upload.ts",
+      "sha1": "4e60a8c26aa1d054fcec121cb37b69b3481cc723"
+    },
+    {
+      "path": "api/photos.ts",
+      "sha1": "cd409a16858f2271a95dc6e6abc62be31ef0cee9"
+    },
+    {
+      "path": "attached_assets/After 1_1760447377966.jpg",
+      "sha1": "4fa68369e63c2b2ecbe7dcf4f7d6be27c974d213"
+    },
+    {
+      "path": "attached_assets/Before 1_1760447377966.jpg",
+      "sha1": "c098a4ed5427e40f69f9a271940c77502a0c1ca8"
+    },
+    {
+      "path": "attached_assets/Pasted--project-name-P-E-Premium-Flooring-Website-objective-Create-a-single-page-website-to--1760386944319_1760386944320.txt",
+      "sha1": "7466b7ef79428ce2b7f38a05adbdec18cd43f960"
+    },
+    {
+      "path": "attached_assets/PE1_1760447738195.jpg",
+      "sha1": "84475e3f96e9a8d9ef08c54ccae9b15f3345b76e"
+    },
+    {
+      "path": "attached_assets/PE10_1760447738198.jpg",
+      "sha1": "ee1cbbdac2705d71157d2012b3d3f5415a36b003"
+    },
+    {
+      "path": "attached_assets/PE12_1760447738198.jpg",
+      "sha1": "cb374e2ed69e80554e1fcfd09d894520d7e263e6"
+    },
+    {
+      "path": "attached_assets/PE13_1760447738198.jpg",
+      "sha1": "b546f5f9dbe385869644db00b57c4245f48fa6e4"
+    },
+    {
+      "path": "attached_assets/PE14_1760447738198.jpg",
+      "sha1": "b98c66eaf153f2a9d1a9e52bf2a9622a4b3cef9a"
+    },
+    {
+      "path": "attached_assets/PE15_1760447738198.jpg",
+      "sha1": "5c902e00c7f3d3b2861c677c81be831a6eb5e6bc"
+    },
+    {
+      "path": "attached_assets/PE16_1760447738199.jpg",
+      "sha1": "71836a741d8237e51e1f9a62c5ef697094901eea"
+    },
+    {
+      "path": "attached_assets/PE18_1760447738199.jpg",
+      "sha1": "65f7eb57637387e3fa9f10f48b6795ff37c33393"
+    },
+    {
+      "path": "attached_assets/PE19_1760447738199.jpg",
+      "sha1": "98430d05e1114060c18021f4bfa2072c86eceefe"
+    },
+    {
+      "path": "attached_assets/PE2_1760447738196.jpg",
+      "sha1": "444a8132273d3ad42a52b0a802956a1432216b91"
+    },
+    {
+      "path": "attached_assets/PE20_1760447738199.jpg",
+      "sha1": "86dad00704f9f5ce0ffda47ba59e0014982c3baa"
+    },
+    {
+      "path": "attached_assets/PE21_1760449066498.jpg",
+      "sha1": "0715364dc3bc8a13b1c2e42b50eb10a2fb003f40"
+    },
+    {
+      "path": "attached_assets/PE22_1760449066499.jpg",
+      "sha1": "4de95cc457219640d690512c59dad83c05339566"
+    },
+    {
+      "path": "attached_assets/PE23_1760449066499.jpg",
+      "sha1": "a7bfd192de72fa1214f6175dfea9ce998ab3326c"
+    },
+    {
+      "path": "attached_assets/PE24_1760449066499.jpg",
+      "sha1": "7707a29fa058bd5f32216de7a4ad838a48340ace"
+    },
+    {
+      "path": "attached_assets/PE25_1760449066499.jpg",
+      "sha1": "954c7d2ac539dd3331271e02ba4cd351c72c9030"
+    },
+    {
+      "path": "attached_assets/PE26_1760449066499.jpg",
+      "sha1": "4fa68369e63c2b2ecbe7dcf4f7d6be27c974d213"
+    },
+    {
+      "path": "attached_assets/PE27_1760449066500.jpg",
+      "sha1": "f90176911a930b279cd9275a1c5633c6a843b1e6"
+    },
+    {
+      "path": "attached_assets/PE28_1760449066500.jpg",
+      "sha1": "8590b5d016cbbf0ad3b98a10394d960579eac774"
+    },
+    {
+      "path": "attached_assets/PE3_1760447738196.jpg",
+      "sha1": "9b84ac9cc420686ffcda85d81626df9b8cda1386"
+    },
+    {
+      "path": "attached_assets/PE4_1760447738196.jpg",
+      "sha1": "48bdfa8cbebdc7470faadb5b37317fa829037141"
+    },
+    {
+      "path": "attached_assets/PE5_1760447738196.jpg",
+      "sha1": "e571901231dd80c9b3e2baa30bfc009a949b5c7f"
+    },
+    {
+      "path": "attached_assets/PE6_1760447738197.jpg",
+      "sha1": "c90946fb565f5d92baf4889daa840962c7104535"
+    },
+    {
+      "path": "attached_assets/PE7_1760447738197.jpg",
+      "sha1": "b75b0c4471ade0eea5be252308c7877eb117034f"
+    },
+    {
+      "path": "attached_assets/PE8_1760447738197.jpg",
+      "sha1": "8923044b0e842b0226dc93fe5ec081064b0acd83"
+    },
+    {
+      "path": "attached_assets/PE9_1760447738197.jpg",
+      "sha1": "a7161a52375a9bb77d8041df9873a883f1b1367f"
+    },
+    {
+      "path": "attached_assets/stock_images/after_renovation_new_536f1226.jpg",
+      "sha1": "03c05896e09ed216cecc062f3e6dfba402ccf99f"
+    },
+    {
+      "path": "attached_assets/stock_images/after_renovation_new_6f8374d1.jpg",
+      "sha1": "59ad2fbd6c23a56a3aaab86161ee73dbdc4e6f3e"
+    },
+    {
+      "path": "attached_assets/stock_images/after_renovation_new_b554a66d.jpg",
+      "sha1": "218a813a20a132585140a28425c515160ee5850c"
+    },
+    {
+      "path": "attached_assets/stock_images/bathroom_tile_instal_0aac14b6.jpg",
+      "sha1": "76ccec9ee56912e71f98e14b58c979d7fdcbad53"
+    },
+    {
+      "path": "attached_assets/stock_images/bathroom_tile_instal_c1df1830.jpg",
+      "sha1": "61c30ceb6fdedf73d3eb1f534d29120d3ac8290a"
+    },
+    {
+      "path": "attached_assets/stock_images/bathroom_tile_instal_fa5603c1.jpg",
+      "sha1": "44e2edbf7502cd00853f1b1caa497d702f6924a0"
+    },
+    {
+      "path": "attached_assets/stock_images/beautiful_tile_floor_43517f39.jpg",
+      "sha1": "147ac8be2a202a7d00ca5d0cb6e2ed81cb967bae"
+    },
+    {
+      "path": "attached_assets/stock_images/beautiful_tile_floor_7989c2a8.jpg",
+      "sha1": "848a8a250606a10aa7af949ae597a93a4f945781"
+    },
+    {
+      "path": "attached_assets/stock_images/beautiful_tile_floor_f0561726.jpg",
+      "sha1": "c9d7df1394cff5443ce1f3fa150e5b54e55df852"
+    },
+    {
+      "path": "attached_assets/stock_images/before_renovation_ol_108d9cd5.jpg",
+      "sha1": "9c0c787be57602afe4561c3e1823f696bea1b009"
+    },
+    {
+      "path": "attached_assets/stock_images/before_renovation_ol_192c1452.jpg",
+      "sha1": "c1c7bae82dc862f9c1e2483885e18bdbac5b2390"
+    },
+    {
+      "path": "attached_assets/stock_images/before_renovation_ol_357f4b0b.jpg",
+      "sha1": "ff0ed7b1557d47f0e161dfe4acc94ec19ddb3fb2"
+    },
+    {
+      "path": "attached_assets/stock_images/countertop_installat_3bbcf4b8.jpg",
+      "sha1": "4928ebc1c540dd300da3e406b7aa046f807aa90a"
+    },
+    {
+      "path": "attached_assets/stock_images/countertop_installat_c64c326b.jpg",
+      "sha1": "bc560f14de1f82f2d6195bcb0e9c7e5a6164036b"
+    },
+    {
+      "path": "attached_assets/stock_images/hardwood_floor_bedro_4a857681.jpg",
+      "sha1": "142b4ad616f51d5b9bbfb68af22843cf41af0242"
+    },
+    {
+      "path": "attached_assets/stock_images/hardwood_floor_bedro_9890b4a5.jpg",
+      "sha1": "3bcfea569e453f23fb1c90f29c183364d1b065f5"
+    },
+    {
+      "path": "attached_assets/stock_images/hardwood_floor_bedro_b9af14a5.jpg",
+      "sha1": "8cfa05cb241fab9cdf87da6e6f736b80fde3c033"
+    },
+    {
+      "path": "attached_assets/stock_images/luxury_vinyl_plank_f_9e5fa553.jpg",
+      "sha1": "fa814530c2ca22574c1d2754cfd0d9ec767ca8e7"
+    },
+    {
+      "path": "client/index.html",
+      "sha1": "42456aae4107c849b341e00eebc5b6b4e4adb04d"
+    },
+    {
+      "path": "client/src/App.tsx",
+      "sha1": "657be4a540aafc78efc8edd10487643ff4d1ce20"
+    },
+    {
+      "path": "client/src/components/About.tsx",
+      "sha1": "9a2571dd99ad9303d66e51e0a8bedc62704c6b7a"
+    },
+    {
+      "path": "client/src/components/BeforeAfter.tsx",
+      "sha1": "a3ee514a219bdebe2429c9e37a12bca76b72e421"
+    },
+    {
+      "path": "client/src/components/Contact.tsx",
+      "sha1": "4a49d454888145b17ab4c455c63181ed679022e0"
+    },
+    {
+      "path": "client/src/components/Footer.tsx",
+      "sha1": "67bfe35d382ff09637d64fd6529dab9d281b8a9a"
+    },
+    {
+      "path": "client/src/components/Gallery.tsx",
+      "sha1": "b4c164a594fe0a760336c79b63be29b66864978e"
+    },
+    {
+      "path": "client/src/components/Header.tsx",
+      "sha1": "268e02ad8f66616a29d24f775bda19a117704c6b"
+    },
+    {
+      "path": "client/src/components/Hero.tsx",
+      "sha1": "031011300069907af2893826b8a0228122c6cb9b"
+    },
+    {
+      "path": "client/src/components/MobileCallButton.tsx",
+      "sha1": "45ce4fa473d00440740bfed7330b745066321344"
+    },
+    {
+      "path": "client/src/components/office/LineItemsTable.tsx",
+      "sha1": "89fb7f73cd185b64a14ca9b0012803508c2b38ee"
+    },
+    {
+      "path": "client/src/components/office/OfficeProjectChat.tsx",
+      "sha1": "e862665011904f909f5bc9e94275e693626c2cb4"
+    },
+    {
+      "path": "client/src/components/office/OfficeShell.tsx",
+      "sha1": "c7014f7e048410af26d59d043d7cb690071f9339"
+    },
+    {
+      "path": "client/src/components/office/PriceBookEditor.tsx",
+      "sha1": "843801e3bbee7778681792cbf22700c970d46022"
+    },
+    {
+      "path": "client/src/components/office/PriceBookOverview.tsx",
+      "sha1": "8c90c45ad4df2894fa98f1a6631317cb3bab49e6"
+    },
+    {
+      "path": "client/src/components/office/TakeoffsTable.tsx",
+      "sha1": "1ab910a3f6351e9aa450d71a210042edb77f6716"
+    },
+    {
+      "path": "client/src/components/Services.tsx",
+      "sha1": "ede79137d493e8cf64f898333a8e6cdda5736b44"
+    },
+    {
+      "path": "client/src/components/ui/accordion.tsx",
+      "sha1": "0133030b57ded062f7b55281b142070e307af57d"
+    },
+    {
+      "path": "client/src/components/ui/alert-dialog.tsx",
+      "sha1": "ad5a9a0315e78e245076b6a133f7b77e272479cc"
+    },
+    {
+      "path": "client/src/components/ui/alert.tsx",
+      "sha1": "f9e87ec8d6f05cc711959a0272788f294ac512be"
+    },
+    {
+      "path": "client/src/components/ui/aspect-ratio.tsx",
+      "sha1": "2fe875f854d13ec92e5625aa4705ee7097890d81"
+    },
+    {
+      "path": "client/src/components/ui/avatar.tsx",
+      "sha1": "a1bb486d4e935976c90e35b41adb4c4be4a08bac"
+    },
+    {
+      "path": "client/src/components/ui/badge.tsx",
+      "sha1": "93ad9312526008d456a2bbf3e32b87fe4a3f9e5b"
+    },
+    {
+      "path": "client/src/components/ui/breadcrumb.tsx",
+      "sha1": "c2c32f50bf5f0138ca9e6bc8cec1ecca3d6c3ce7"
+    },
+    {
+      "path": "client/src/components/ui/button.tsx",
+      "sha1": "9566dcc1c42bf6a6cbb47c2b2d19735c60d2d66b"
+    },
+    {
+      "path": "client/src/components/ui/calendar.tsx",
+      "sha1": "210f33f7aba33121d3df75995986baedfae5b386"
+    },
+    {
+      "path": "client/src/components/ui/card.tsx",
+      "sha1": "d60f131b1a75e3c353e67e124bfe92046286548c"
+    },
+    {
+      "path": "client/src/components/ui/carousel.tsx",
+      "sha1": "dcd2aab5562e1751b377741c05e5c0b30d78a044"
+    },
+    {
+      "path": "client/src/components/ui/chart.tsx",
+      "sha1": "051ed567810edae88a7bbf6482ac01a49c7a4b3e"
+    },
+    {
+      "path": "client/src/components/ui/checkbox.tsx",
+      "sha1": "4d2ba8b7e5a3ccdaa50144e9530921feaf4c3251"
+    },
+    {
+      "path": "client/src/components/ui/collapsible.tsx",
+      "sha1": "7693aff25230524cc4aa90d6490c7d1a3388d700"
+    },
+    {
+      "path": "client/src/components/ui/command.tsx",
+      "sha1": "34f9c420ad4324ee9adb25bd57ee5e3c32e1435b"
+    },
+    {
+      "path": "client/src/components/ui/context-menu.tsx",
+      "sha1": "6bda7568aa90233ecc67a92a6ed14fe452ba73ed"
+    },
+    {
+      "path": "client/src/components/ui/dialog.tsx",
+      "sha1": "144258b3657dcd61d72d649400e75c4b4b187ebf"
+    },
+    {
+      "path": "client/src/components/ui/drawer.tsx",
+      "sha1": "eb2a53439e5a3be476225db58d9a9087330364d8"
+    },
+    {
+      "path": "client/src/components/ui/dropdown-menu.tsx",
+      "sha1": "fd41d6d25cc65669b370d5409102cf51214381f1"
+    },
+    {
+      "path": "client/src/components/ui/form.tsx",
+      "sha1": "7f68206f66502b27b9d79a66cfb26f6bd4c73a79"
+    },
+    {
+      "path": "client/src/components/ui/hover-card.tsx",
+      "sha1": "d1692e1f87dc8b896b7c170c5d657f50ec941cec"
+    },
+    {
+      "path": "client/src/components/ui/input-otp.tsx",
+      "sha1": "ca82cb0775fd0df3e34d9e46b3071bc09d44853d"
+    },
+    {
+      "path": "client/src/components/ui/input.tsx",
+      "sha1": "30832d139660382beb3e79915ce9aa87784c3325"
+    },
+    {
+      "path": "client/src/components/ui/label.tsx",
+      "sha1": "d6b85ad3d352bcc536ae3247c30d3f1a4fb4b684"
+    },
+    {
+      "path": "client/src/components/ui/menubar.tsx",
+      "sha1": "f225c79a07fbd41d51d299deb439e956f13affdf"
+    },
+    {
+      "path": "client/src/components/ui/navigation-menu.tsx",
+      "sha1": "a2f3f897c984671f2f1241f6ab2b675ace7883f4"
+    },
+    {
+      "path": "client/src/components/ui/pagination.tsx",
+      "sha1": "8a8968cf686e0885b3b3fb2077253ce15cd2da9a"
+    },
+    {
+      "path": "client/src/components/ui/popover.tsx",
+      "sha1": "8b33642cbb1ff6c2ccd919ef5fd68eb7d8c8f41d"
+    },
+    {
+      "path": "client/src/components/ui/progress.tsx",
+      "sha1": "5ca7094a334e74de3333cd3a0e977fea9a866c2b"
+    },
+    {
+      "path": "client/src/components/ui/radio-group.tsx",
+      "sha1": "cb3ad9ec8fff886ea7046d31ff6dc72dd931a605"
+    },
+    {
+      "path": "client/src/components/ui/resizable.tsx",
+      "sha1": "3fee2768ba56dc432625c1e0ab9e207927a6fce3"
+    },
+    {
+      "path": "client/src/components/ui/scroll-area.tsx",
+      "sha1": "07ca1c0102f09b8a23cf8ea9d8f02a5df797bb73"
+    },
+    {
+      "path": "client/src/components/ui/select.tsx",
+      "sha1": "5f08fde43d74808fbc1a705ef60ed81bde995836"
+    },
+    {
+      "path": "client/src/components/ui/separator.tsx",
+      "sha1": "443bca0122d1a88c605f25c3005df6a161409122"
+    },
+    {
+      "path": "client/src/components/ui/sheet.tsx",
+      "sha1": "b4343374ba0d2f43cb330d02fd58c87eaf267aaf"
+    },
+    {
+      "path": "client/src/components/ui/sidebar.tsx",
+      "sha1": "706f4d6d0a6b4227aea8a9accd8b6213dc84bd7e"
+    },
+    {
+      "path": "client/src/components/ui/skeleton.tsx",
+      "sha1": "9e43ec961a184b4867cdcf052aaf5c9003847812"
+    },
+    {
+      "path": "client/src/components/ui/slider.tsx",
+      "sha1": "a171560e4d2911556b967dd34613e5bd1382a7ab"
+    },
+    {
+      "path": "client/src/components/ui/switch.tsx",
+      "sha1": "cf2ec60710facc29e19e1dbce6e5e197f7ec0c77"
+    },
+    {
+      "path": "client/src/components/ui/table.tsx",
+      "sha1": "a9cd54b0d5b222af89c0668f25c72196f4da5bfa"
+    },
+    {
+      "path": "client/src/components/ui/tabs.tsx",
+      "sha1": "365f0628dcb63ce66bda2da1b83cf431b9b01f3b"
+    },
+    {
+      "path": "client/src/components/ui/textarea.tsx",
+      "sha1": "ca98f9bec631a95c52820241093b0118e7b0eeb4"
+    },
+    {
+      "path": "client/src/components/ui/toast.tsx",
+      "sha1": "118262f563821b375e418331ccae58ce1f71d800"
+    },
+    {
+      "path": "client/src/components/ui/toaster.tsx",
+      "sha1": "b88f5fc529be7033b9c6b1f7e1e126ac47b640a4"
+    },
+    {
+      "path": "client/src/components/ui/toggle-group.tsx",
+      "sha1": "94dc04165db18906531da06d509b10353b78917d"
+    },
+    {
+      "path": "client/src/components/ui/toggle.tsx",
+      "sha1": "6ae0c7f8fb6949c6141a6aca2ed5659cbb43921b"
+    },
+    {
+      "path": "client/src/components/ui/tooltip.tsx",
+      "sha1": "560138c10f63fd46924b2e9af897f6f903d9fdc8"
+    },
+    {
+      "path": "client/src/hooks/use-mobile.tsx",
+      "sha1": "cdb9aae9ca8d354d767e8da4731ff7eb4a16d532"
+    },
+    {
+      "path": "client/src/hooks/use-toast.ts",
+      "sha1": "cbcd33a62acb6fdb85546fc41ec5a34470f9bd7e"
+    },
+    {
+      "path": "client/src/index.css",
+      "sha1": "32af3616ed5dd902548a9650c0be90f4040f6c8a"
+    },
+    {
+      "path": "client/src/lib/office.ts",
+      "sha1": "ad2c1d606cb540203d148db94b9842257b3a7276"
+    },
+    {
+      "path": "client/src/lib/queryClient.ts",
+      "sha1": "ffbcfab9b5a919ff9eec04360f7dd9832bba91c6"
+    },
+    {
+      "path": "client/src/lib/utils.ts",
+      "sha1": "03edf7b44c7cf1d3f48be4f72866007dbb63b8c6"
+    },
+    {
+      "path": "client/src/main.tsx",
+      "sha1": "f1f4586bc997c74cce4dac9e4fe1424f910b3276"
+    },
+    {
+      "path": "client/src/pages/home.tsx",
+      "sha1": "1f403ed2abe1f93e7a5caa6e014dcc9369e90233"
+    },
+    {
+      "path": "client/src/pages/not-found.tsx",
+      "sha1": "4c78edc5a7271b896cf2b0d6eb4d8567cd760614"
+    },
+    {
+      "path": "client/src/pages/office-design-preview.tsx",
+      "sha1": "e48714a90b47e12ea87fc613655d34ad3ef84dd8"
+    },
+    {
+      "path": "client/src/pages/office-login.tsx",
+      "sha1": "36c9fdf934bdea19f67b0fc8ed69ee88b76891ff"
+    },
+    {
+      "path": "client/src/pages/office-project-detail.tsx",
+      "sha1": "480cfd6d221a2afaee461d8bb1c56dae9c8ca906"
+    },
+    {
+      "path": "client/src/pages/office-projects.tsx",
+      "sha1": "ec0f84975d78c2fb17722c2d8a4de35e507630a9"
+    },
+    {
+      "path": "client/src/pages/office-quote.tsx",
+      "sha1": "24c1ae43c0fd85d3576574dc3f271869f7615df4"
+    },
+    {
+      "path": "components.json",
+      "sha1": "cfab1be50208b362f522fc60c4d274f249f29165"
+    },
+    {
+      "path": "design_guidelines.md",
+      "sha1": "db4dd6723f022337de17a368e5659bd39fd187f2"
+    },
+    {
+      "path": "dist/index.js",
+      "sha1": "f2ad36187082e01503abb8052a25379060b03b07"
+    },
+    {
+      "path": "dist/public/assets/Before 1_1760447377966-B1pDFnk5.jpg",
+      "sha1": "c098a4ed5427e40f69f9a271940c77502a0c1ca8"
+    },
+    {
+      "path": "dist/public/assets/index-B-hcmYCV.js",
+      "sha1": "7426ad92f0fd784525e82a9d31015fdfd0004bd6"
+    },
+    {
+      "path": "dist/public/assets/index-f4zIbu-N.css",
+      "sha1": "5220a1f7ddf7739baba09d9b991a18caee13fb82"
+    },
+    {
+      "path": "dist/public/assets/luxury_vinyl_plank_f_9e5fa553-Cw8P7YVQ.jpg",
+      "sha1": "fa814530c2ca22574c1d2754cfd0d9ec767ca8e7"
+    },
+    {
+      "path": "dist/public/assets/PE1_1760447738195-CciWcQb2.jpg",
+      "sha1": "84475e3f96e9a8d9ef08c54ccae9b15f3345b76e"
+    },
+    {
+      "path": "dist/public/assets/PE10_1760447738198-cPJXBL60.jpg",
+      "sha1": "ee1cbbdac2705d71157d2012b3d3f5415a36b003"
+    },
+    {
+      "path": "dist/public/assets/PE12_1760447738198-BuYMkc3J.jpg",
+      "sha1": "cb374e2ed69e80554e1fcfd09d894520d7e263e6"
+    },
+    {
+      "path": "dist/public/assets/PE13_1760447738198-DeSC2i2g.jpg",
+      "sha1": "b546f5f9dbe385869644db00b57c4245f48fa6e4"
+    },
+    {
+      "path": "dist/public/assets/PE14_1760447738198-mUsHRm38.jpg",
+      "sha1": "b98c66eaf153f2a9d1a9e52bf2a9622a4b3cef9a"
+    },
+    {
+      "path": "dist/public/assets/PE15_1760447738198-gNzwGXPC.jpg",
+      "sha1": "5c902e00c7f3d3b2861c677c81be831a6eb5e6bc"
+    },
+    {
+      "path": "dist/public/assets/PE16_1760447738199-nb8plm7X.jpg",
+      "sha1": "71836a741d8237e51e1f9a62c5ef697094901eea"
+    },
+    {
+      "path": "dist/public/assets/PE18_1760447738199-BOqca_gj.jpg",
+      "sha1": "65f7eb57637387e3fa9f10f48b6795ff37c33393"
+    },
+    {
+      "path": "dist/public/assets/PE19_1760447738199-CoAVCngp.jpg",
+      "sha1": "98430d05e1114060c18021f4bfa2072c86eceefe"
+    },
+    {
+      "path": "dist/public/assets/PE2_1760447738196-KnVxGFcT.jpg",
+      "sha1": "444a8132273d3ad42a52b0a802956a1432216b91"
+    },
+    {
+      "path": "dist/public/assets/PE20_1760447738199-BpCOzzym.jpg",
+      "sha1": "86dad00704f9f5ce0ffda47ba59e0014982c3baa"
+    },
+    {
+      "path": "dist/public/assets/PE21_1760449066498-B9HW4UxC.jpg",
+      "sha1": "0715364dc3bc8a13b1c2e42b50eb10a2fb003f40"
+    },
+    {
+      "path": "dist/public/assets/PE22_1760449066499-DQeR30Y9.jpg",
+      "sha1": "4de95cc457219640d690512c59dad83c05339566"
+    },
+    {
+      "path": "dist/public/assets/PE23_1760449066499-D4t29lBI.jpg",
+      "sha1": "a7bfd192de72fa1214f6175dfea9ce998ab3326c"
+    },
+    {
+      "path": "dist/public/assets/PE24_1760449066499-DIBlVZ6Y.jpg",
+      "sha1": "7707a29fa058bd5f32216de7a4ad838a48340ace"
+    },
+    {
+      "path": "dist/public/assets/PE25_1760449066499-BOmxBLfv.jpg",
+      "sha1": "954c7d2ac539dd3331271e02ba4cd351c72c9030"
+    },
+    {
+      "path": "dist/public/assets/PE26_1760449066499-CUp3KXqu.jpg",
+      "sha1": "4fa68369e63c2b2ecbe7dcf4f7d6be27c974d213"
+    },
+    {
+      "path": "dist/public/assets/PE27_1760449066500-BTrDStLZ.jpg",
+      "sha1": "f90176911a930b279cd9275a1c5633c6a843b1e6"
+    },
+    {
+      "path": "dist/public/assets/PE28_1760449066500-wlEn2ybk.jpg",
+      "sha1": "8590b5d016cbbf0ad3b98a10394d960579eac774"
+    },
+    {
+      "path": "dist/public/assets/PE3_1760447738196-QDE_8Q3o.jpg",
+      "sha1": "9b84ac9cc420686ffcda85d81626df9b8cda1386"
+    },
+    {
+      "path": "dist/public/assets/PE4_1760447738196-BVLQIp1E.jpg",
+      "sha1": "48bdfa8cbebdc7470faadb5b37317fa829037141"
+    },
+    {
+      "path": "dist/public/assets/PE5_1760447738196-BbXMuf8C.jpg",
+      "sha1": "e571901231dd80c9b3e2baa30bfc009a949b5c7f"
+    },
+    {
+      "path": "dist/public/assets/PE6_1760447738197-BnDz_JZ2.jpg",
+      "sha1": "c90946fb565f5d92baf4889daa840962c7104535"
+    },
+    {
+      "path": "dist/public/assets/PE7_1760447738197-BoITXbob.jpg",
+      "sha1": "b75b0c4471ade0eea5be252308c7877eb117034f"
+    },
+    {
+      "path": "dist/public/assets/PE8_1760447738197-BccB7Xmr.jpg",
+      "sha1": "8923044b0e842b0226dc93fe5ec081064b0acd83"
+    },
+    {
+      "path": "dist/public/assets/PE9_1760447738197-C2jJ_GA_.jpg",
+      "sha1": "a7161a52375a9bb77d8041df9873a883f1b1367f"
+    },
+    {
+      "path": "dist/public/index.html",
+      "sha1": "1845b55c801727cf7137e504b7f5bbce706bab16"
+    },
+    {
+      "path": "Dockerfile",
+      "sha1": "4ce9bcb105bd045393b5f17aa744545b1d83b6df"
+    },
+    {
+      "path": "drizzle.config.ts",
+      "sha1": "1733203e1da2546921ce2df2f5b2bd41608576a5"
+    },
+    {
+      "path": "package-lock.json",
+      "sha1": "ffa0376ffe32b1714c46e38b368f465a2a7e3528"
+    },
+    {
+      "path": "package.json",
+      "sha1": "20f38892b204dd3d285cf56f64d6ca40f0b7bc31"
+    },
+    {
+      "path": "postcss.config.js",
+      "sha1": "211016771cee108602ec598738d916b332ee0f02"
+    },
+    {
+      "path": "railway-dist/index.js",
+      "sha1": "83f35daba6f32fffcece4a12ee6cdc0740b66c32"
+    },
+    {
+      "path": "railway-dist/public/assets/Before 1_1760447377966-B1pDFnk5.jpg",
+      "sha1": "c098a4ed5427e40f69f9a271940c77502a0c1ca8"
+    },
+    {
+      "path": "railway-dist/public/assets/index-brth1hUi.js",
+      "sha1": "fa1c403905af8686d7c568764e10ef511ada9a89"
+    },
+    {
+      "path": "railway-dist/public/assets/index-CYEnpYxx.css",
+      "sha1": "428cb0e8b16c24722ec99c70833d494885d475f1"
+    },
+    {
+      "path": "railway-dist/public/assets/luxury_vinyl_plank_f_9e5fa553-Cw8P7YVQ.jpg",
+      "sha1": "fa814530c2ca22574c1d2754cfd0d9ec767ca8e7"
+    },
+    {
+      "path": "railway-dist/public/assets/PE1_1760447738195-CciWcQb2.jpg",
+      "sha1": "84475e3f96e9a8d9ef08c54ccae9b15f3345b76e"
+    },
+    {
+      "path": "railway-dist/public/assets/PE10_1760447738198-cPJXBL60.jpg",
+      "sha1": "ee1cbbdac2705d71157d2012b3d3f5415a36b003"
+    },
+    {
+      "path": "railway-dist/public/assets/PE12_1760447738198-BuYMkc3J.jpg",
+      "sha1": "cb374e2ed69e80554e1fcfd09d894520d7e263e6"
+    },
+    {
+      "path": "railway-dist/public/assets/PE13_1760447738198-DeSC2i2g.jpg",
+      "sha1": "b546f5f9dbe385869644db00b57c4245f48fa6e4"
+    },
+    {
+      "path": "railway-dist/public/assets/PE14_1760447738198-mUsHRm38.jpg",
+      "sha1": "b98c66eaf153f2a9d1a9e52bf2a9622a4b3cef9a"
+    },
+    {
+      "path": "railway-dist/public/assets/PE15_1760447738198-gNzwGXPC.jpg",
+      "sha1": "5c902e00c7f3d3b2861c677c81be831a6eb5e6bc"
+    },
+    {
+      "path": "railway-dist/public/assets/PE16_1760447738199-nb8plm7X.jpg",
+      "sha1": "71836a741d8237e51e1f9a62c5ef697094901eea"
+    },
+    {
+      "path": "railway-dist/public/assets/PE18_1760447738199-BOqca_gj.jpg",
+      "sha1": "65f7eb57637387e3fa9f10f48b6795ff37c33393"
+    },
+    {
+      "path": "railway-dist/public/assets/PE19_1760447738199-CoAVCngp.jpg",
+      "sha1": "98430d05e1114060c18021f4bfa2072c86eceefe"
+    },
+    {
+      "path": "railway-dist/public/assets/PE2_1760447738196-KnVxGFcT.jpg",
+      "sha1": "444a8132273d3ad42a52b0a802956a1432216b91"
+    },
+    {
+      "path": "railway-dist/public/assets/PE20_1760447738199-BpCOzzym.jpg",
+      "sha1": "86dad00704f9f5ce0ffda47ba59e0014982c3baa"
+    },
+    {
+      "path": "railway-dist/public/assets/PE21_1760449066498-B9HW4UxC.jpg",
+      "sha1": "0715364dc3bc8a13b1c2e42b50eb10a2fb003f40"
+    },
+    {
+      "path": "railway-dist/public/assets/PE22_1760449066499-DQeR30Y9.jpg",
+      "sha1": "4de95cc457219640d690512c59dad83c05339566"
+    },
+    {
+      "path": "railway-dist/public/assets/PE23_1760449066499-D4t29lBI.jpg",
+      "sha1": "a7bfd192de72fa1214f6175dfea9ce998ab3326c"
+    },
+    {
+      "path": "railway-dist/public/assets/PE24_1760449066499-DIBlVZ6Y.jpg",
+      "sha1": "7707a29fa058bd5f32216de7a4ad838a48340ace"
+    },
+    {
+      "path": "railway-dist/public/assets/PE25_1760449066499-BOmxBLfv.jpg",
+      "sha1": "954c7d2ac539dd3331271e02ba4cd351c72c9030"
+    },
+    {
+      "path": "railway-dist/public/assets/PE26_1760449066499-CUp3KXqu.jpg",
+      "sha1": "4fa68369e63c2b2ecbe7dcf4f7d6be27c974d213"
+    },
+    {
+      "path": "railway-dist/public/assets/PE27_1760449066500-BTrDStLZ.jpg",
+      "sha1": "f90176911a930b279cd9275a1c5633c6a843b1e6"
+    },
+    {
+      "path": "railway-dist/public/assets/PE28_1760449066500-wlEn2ybk.jpg",
+      "sha1": "8590b5d016cbbf0ad3b98a10394d960579eac774"
+    },
+    {
+      "path": "railway-dist/public/assets/PE3_1760447738196-QDE_8Q3o.jpg",
+      "sha1": "9b84ac9cc420686ffcda85d81626df9b8cda1386"
+    },
+    {
+      "path": "railway-dist/public/assets/PE4_1760447738196-BVLQIp1E.jpg",
+      "sha1": "48bdfa8cbebdc7470faadb5b37317fa829037141"
+    },
+    {
+      "path": "railway-dist/public/assets/PE5_1760447738196-BbXMuf8C.jpg",
+      "sha1": "e571901231dd80c9b3e2baa30bfc009a949b5c7f"
+    },
+    {
+      "path": "railway-dist/public/assets/PE6_1760447738197-BnDz_JZ2.jpg",
+      "sha1": "c90946fb565f5d92baf4889daa840962c7104535"
+    },
+    {
+      "path": "railway-dist/public/assets/PE7_1760447738197-BoITXbob.jpg",
+      "sha1": "b75b0c4471ade0eea5be252308c7877eb117034f"
+    },
+    {
+      "path": "railway-dist/public/assets/PE8_1760447738197-BccB7Xmr.jpg",
+      "sha1": "8923044b0e842b0226dc93fe5ec081064b0acd83"
+    },
+    {
+      "path": "railway-dist/public/assets/PE9_1760447738197-C2jJ_GA_.jpg",
+      "sha1": "a7161a52375a9bb77d8041df9873a883f1b1367f"
+    },
+    {
+      "path": "railway-dist/public/index.html",
+      "sha1": "9272d0ddcd69537ddea02dccbeb077be29b4e3a4"
+    },
+    {
+      "path": "replit.md",
+      "sha1": "e73731635c5b71e19d238b36c7f1b543fbddbbff"
+    },
+    {
+      "path": "server/db.ts",
+      "sha1": "bca4fcad64095fb0893509dc7265557dbb96e94a"
+    },
+    {
+      "path": "server/index.ts",
+      "sha1": "f6ac17aa13c78c26c6e237a2b28e67aad9b754b5"
+    },
+    {
+      "path": "server/office/auth.ts",
+      "sha1": "6afd3d30f529cf5a5219512d6ce6d77a1892eff9"
+    },
+    {
+      "path": "server/office/binary.ts",
+      "sha1": "c060d3c17a2abccc5775dab923f9339aa2ed9cc3"
+    },
+    {
+      "path": "server/office/calculator.test.ts",
+      "sha1": "a7c16a957899b1ffcf9003aa2c3381ea3210491e"
+    },
+    {
+      "path": "server/office/calculator.ts",
+      "sha1": "11a595f41dd6bcc2439484831e169f80f07006ed"
+    },
+    {
+      "path": "server/office/chat.ts",
+      "sha1": "55af816d2d9807ae049cf220db5f295565f4e9ee"
+    },
+    {
+      "path": "server/office/config.ts",
+      "sha1": "e3bedb85f38845be9e0c9fa14f9c4bc7859384fd"
+    },
+    {
+      "path": "server/office/data.ts",
+      "sha1": "c5e4dff305819ab428367489a14d8d84a54cd442"
+    },
+    {
+      "path": "server/office/extraction.test.ts",
+      "sha1": "fe7fe86a5f2a290753ff4442eaa672897f9baa04"
+    },
+    {
+      "path": "server/office/extraction.ts",
+      "sha1": "6638f8c69b9150fd10a0f37d7f82e3b50797d6bb"
+    },
+    {
+      "path": "server/office/handlers.ts",
+      "sha1": "968512cedb20239bceb0a00d6542cfa32a91425a"
+    },
+    {
+      "path": "server/office/quote-pdf.ts",
+      "sha1": "66d7d70a351756a371e6a1a94612b3e86cf9352f"
+    },
+    {
+      "path": "server/public/site-data.ts",
+      "sha1": "e605483120d58508d70df11426fa654fd8e54364"
+    },
+    {
+      "path": "server/routes.ts",
+      "sha1": "7b6838976bb5c0fddb0e3c55771fd75e28ae1bf4"
+    },
+    {
+      "path": "server/storage.ts",
+      "sha1": "9265818957cf0ea80aeb1001809ade0ad01dfecf"
+    },
+    {
+      "path": "server/vite.ts",
+      "sha1": "304ec74e97609e7a11b47b856acaa0a7f3080534"
+    },
+    {
+      "path": "shared/office.ts",
+      "sha1": "99edfb0da287b401c75f3ed842a885d4453f4f40"
+    },
+    {
+      "path": "shared/schema.ts",
+      "sha1": "b0301eaf8bf844077c77f7bc69b942189709d201"
+    },
+    {
+      "path": "tailwind.config.ts",
+      "sha1": "26d33eacef99707c039055652cd49a6b01b38eb9"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha1": "678d6e93c2b7ae78807160fb838d5aef146a590a"
+    },
+    {
+      "path": "vercel.json",
+      "sha1": "1543a3f9f2cbf45f668d061a49b6575373ab02cb"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha1": "1931ba0e5122431a2fa1269323601de26aac80e0"
+    }
+  ]
+}
