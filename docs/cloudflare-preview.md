@@ -5,8 +5,9 @@ This candidate serves the exact public frontend from Vercel production deploymen
 ## Baseline and branch boundary
 
 - The immutable recovery record pins Vercel project `prj_i2JrAi8oKyqZjjx4933ghgxk5VsB`, deployment `dpl_95Z1q8QmzTQd1j6SyGryFmfi6A1a`, and source commit `743d03079d2a570703d7fd7dde5e71f6c13b1372`.
-- Recovery PR #1 merged as `95858dbc916e14fd4fa262325730495ab0a08bfe` into `codex/office-estimator-railway` rather than `main`. At candidate creation, `origin/main` remained `02e1dd2631cd299469ffe45b12f5ffd23d963830` and did not contain the recovery.
-- This branch starts at `95858db` and its PR must target `codex/office-estimator-railway`. It does not merge, rewrite, or silently skip `main` history.
+- Historical recovery PR #1 merged as `95858dbc916e14fd4fa262325730495ab0a08bfe` into `codex/office-estimator-railway` rather than `main`. At candidate creation, `origin/main` remained `02e1dd2631cd299469ffe45b12f5ffd23d963830` and did not contain the recovery.
+- Historical preview PR #2 started at `95858db` and targeted `codex/office-estimator-railway`; it merged as `7216f3f3afdc5a32966f826999eae43ef15579ec` without rewriting or silently skipping `main` history.
+- Canonical-promotion PR #3 is a separate, explicit promotion of that preserved lineage to `main`. Its required containment gate is that the Vercel project Git link is disconnected before merge; PR #3 does not deploy, alias, modify DNS, or alter Vercel production.
 
 The app is a Vite/React SPA with Node/Vercel functions, not Next.js. The preview therefore uses a native module Worker and Cloudflare Static Assets rather than OpenNext.
 
