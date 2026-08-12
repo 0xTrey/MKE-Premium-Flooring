@@ -1,83 +1,10 @@
-import { randomUUID } from "crypto";
-import { Pool, neonConfig } from "@neondatabase/serverless";
-import ws from "ws";
-
-neonConfig.webSocketConstructor = ws;
-
-type ContactSubmission = {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  projectType: string;
-  location: string;
-  createdAt: string;
-};
-
-const memorySubmissions: ContactSubmission[] = [];
-let pool: Pool | null = null;
-
-function hasDatabase(): boolean {
-  return Boolean(process.env.DATABASE_URL);
-}
-
-function getPool(): Pool {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL is not set");
-  }
-
-  if (!pool) {
-    pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  }
-
-  return pool;
-}
-
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-function normalizeBody(body: any): {
-  name: string;
-  phone: string;
-  email: string;
-  projectType: string;
-  location: string;
-} {
-  const data = typeof body === "string" ? JSON.parse(body || "{}") : body || {};
-
-  return {
-    name: String(data.name || "").trim(),
-    phone: String(data.phone || "").trim(),
-    email: String(data.email || "").trim(),
-    projectType: String(data.projectType || "").trim(),
-    location: String(data.location || "").trim(),
-  };
-}
-
-function validateSubmission(input: {
-  name: string;
-  phone: string;
-  email: string;
-  projectType: string;
-  location: string;
-}): string[] {
-  const errors: string[] = [];
-
-  if (input.name.length < 2) errors.push("Name must be at least 2 characters");
-  if (input.phone.length < 10) errors.push("Please enter a valid phone number");
-  if (!isValidEmail(input.email)) errors.push("Please enter a valid email address");
-  if (input.projectType.length < 5) errors.push("Please describe your project");
-  if (input.location.length < 3) errors.push("Please enter your location");
-
-  return errors;
-}
+import { createContactSubmission, listContactSubmissions, normalizeContactBody, validateContactSubmission } from "../server/public/site-data";
 
 export default async function handler(req: any, res: any) {
   if (req.method === "POST") {
     try {
-      const input = normalizeBody(req.body);
-      const validationErrors = validateSubmission(input);
+      const input = normalizeContactBody(req.body);
+      const validationErrors = validateContactSubmission(input);
 
       if (validationErrors.length > 0) {
         return res.status(400).json({
@@ -87,39 +14,7 @@ export default async function handler(req: any, res: any) {
         });
       }
 
-      if (hasDatabase()) {
-        const pool = getPool();
-        const result = await pool.query(
-          `
-          INSERT INTO contact_submissions (name, phone, email, project_type, location)
-          VALUES ($1, $2, $3, $4, $5)
-          RETURNING
-            id,
-            name,
-            phone,
-            email,
-            project_type AS "projectType",
-            location,
-            created_at AS "createdAt"
-          `,
-          [input.name, input.phone, input.email, input.projectType, input.location],
-        );
-
-        return res.status(200).json({
-          success: true,
-          message: "Contact form submitted successfully",
-          data: result.rows[0],
-        });
-      }
-
-      const submission: ContactSubmission = {
-        id: randomUUID(),
-        ...input,
-        createdAt: new Date().toISOString(),
-      };
-
-      memorySubmissions.unshift(submission);
-
+      const submission = await createContactSubmission(input);
       return res.status(200).json({
         success: true,
         message: "Contact form submitted successfully",
@@ -136,32 +31,10 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "GET") {
     try {
-      if (hasDatabase()) {
-        const pool = getPool();
-        const result = await pool.query(
-          `
-          SELECT
-            id,
-            name,
-            phone,
-            email,
-            project_type AS "projectType",
-            location,
-            created_at AS "createdAt"
-          FROM contact_submissions
-          ORDER BY created_at DESC
-          `,
-        );
-
-        return res.status(200).json({
-          success: true,
-          data: result.rows,
-        });
-      }
-
+      const submissions = await listContactSubmissions();
       return res.status(200).json({
         success: true,
-        data: memorySubmissions,
+        data: submissions,
       });
     } catch (error) {
       console.error("Error fetching contact submissions:", error);

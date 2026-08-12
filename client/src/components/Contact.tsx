@@ -23,7 +23,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Phone, Mail, MapPin, CircleCheckBig } from "lucide-react";
 
@@ -44,7 +43,21 @@ export function Contact() {
 
   const mutation = useMutation({
     mutationFn: async (data: InsertContactSubmission) => {
-      return await apiRequest("POST", "/api/contact", data);
+      const subject = encodeURIComponent(`Free estimate request from ${data.name}`);
+      const body = encodeURIComponent(
+        [
+          `Name: ${data.name}`,
+          `Phone: ${data.phone}`,
+          `Email: ${data.email || "Not provided"}`,
+          `Location: ${data.location || "Not provided"}`,
+          "",
+          "Project Type & Overview:",
+          data.projectType,
+        ].join("\n")
+      );
+
+      window.location.href = `mailto:Pepremiumflooring@gmail.com?subject=${subject}&body=${body}`;
+      return true;
     },
     onSuccess: () => {
       setShowSuccessDialog(true);
@@ -65,18 +78,18 @@ export function Contact() {
 
   return (
     <>
-      <section className="py-16 lg:py-24 bg-card" id="contact">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+      <section className="py-14 sm:py-16 lg:py-24 bg-card" id="contact">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-5xl font-heading font-semibold text-foreground mb-4">
+            <h2 className="text-3xl lg:text-5xl font-heading font-semibold leading-tight text-foreground mb-4">
               Get Your Free Estimate
             </h2>
-            <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
               Ready to transform your space? Contact us today for a free, no-obligation estimate.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12">
             <div>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -188,7 +201,7 @@ export function Contact() {
 
           <div className="space-y-8">
             <div>
-              <h3 className="text-2xl font-heading font-semibold text-foreground mb-6">
+              <h3 className="text-xl sm:text-2xl font-heading font-semibold text-foreground mb-6">
                 Contact Information
               </h3>
               <div className="space-y-6">
@@ -239,7 +252,7 @@ export function Contact() {
             </div>
 
             <Card className="bg-primary/5 border-primary/10 overflow-visible">
-              <CardContent className="p-8">
+              <CardContent className="p-5 sm:p-8">
                 <h4 className="text-xl font-heading font-semibold text-foreground mb-4">
                   Why Choose Us?
                 </h4>
@@ -273,11 +286,11 @@ export function Contact() {
           <DialogHeader className="items-center text-center gap-3">
             <CircleCheckBig className="h-14 w-14 text-green-600" />
             <DialogTitle className="text-2xl sm:text-3xl font-heading">
-              Message Sent Successfully
+              Email Draft Opened
             </DialogTitle>
             <DialogDescription className="text-base sm:text-lg max-w-md">
-              Thanks for reaching out. We received your request and will contact you within 24
-              hours to discuss your flooring project.
+              Your email app should open with the estimate request filled in. If it does not,
+              please call (414) 275-1889 or email Pepremiumflooring@gmail.com directly.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="sm:justify-center mt-2">

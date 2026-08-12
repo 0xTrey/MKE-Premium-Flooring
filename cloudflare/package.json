@@ -1,0 +1,11 @@
+{
+  "name": "mke-premium-flooring-cloudflare-tooling",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dry-run": "wrangler deploy --config ../wrangler.preview.jsonc --dry-run --outdir ../dist/cloudflare-preview-worker --experimental-provision=false --experimental-auto-create=false"
+  },
+  "devDependencies": {
+    "wrangler": "4.122.0"
+  }
+}

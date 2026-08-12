@@ -1,0 +1,54 @@
+{
+  "preview": {
+    "bindings": [
+      {
+        "name": "ASSETS",
+        "kind": "static-assets",
+        "required": true
+      }
+    ],
+    "vars": [
+      {
+        "name": "PREVIEW_MODE",
+        "requiredValue": "sealed"
+      }
+    ],
+    "secrets": []
+  },
+  "futureLivePort": {
+    "secretNames": [
+      "DATABASE_URL",
+      "OFFICE_TEAM_PASSWORD",
+      "OFFICE_SESSION_SECRET",
+      "AI_EXTRACTION_KEY",
+      "GEMINI_API_KEY"
+    ],
+    "variableNames": [
+      "OFFICE_SESSION_DAYS",
+      "QUOTE_COMPANY_NAME",
+      "QUOTE_COMPANY_PHONE",
+      "QUOTE_COMPANY_EMAIL",
+      "QUOTE_COMPANY_ADDRESS",
+      "AI_EXTRACTION_API_URL",
+      "AI_EXTRACTION_MODEL",
+      "GEMINI_MODEL"
+    ],
+    "alternates": [
+      {
+        "preferred": "GEMINI_API_KEY",
+        "legacyName": "OFFICE_CHAT_API_KEY"
+      },
+      {
+        "preferred": "GEMINI_MODEL",
+        "legacyName": "OFFICE_CHAT_MODEL"
+      }
+    ],
+    "undeclaredResources": [
+      {
+        "name": "OFFICE_FILES",
+        "kind": "r2-bucket",
+        "status": "optional future migration only; production currently stores file payloads in Neon"
+      }
+    ]
+  }
+}

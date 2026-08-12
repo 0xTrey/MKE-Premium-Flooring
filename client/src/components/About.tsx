@@ -18,10 +18,10 @@ export function About() {
 
   return (
     <section className="py-16 lg:py-24 bg-card" id="about">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-12">
           <div>
-            <h2 className="text-3xl lg:text-5xl font-heading font-semibold text-foreground mb-6">
+            <h2 className="text-3xl lg:text-5xl font-heading font-semibold text-foreground mb-6 text-balance">
               Expert Flooring Installation for Milwaukee Metro
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
@@ -45,15 +45,15 @@ export function About() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
             {stats.map((stat, index) => (
               <Card
                 key={index}
                 className="overflow-visible"
                 data-testid={`card-stat-${index}`}
               >
-                <CardContent className="p-6 text-center">
-                  <div className="text-4xl lg:text-5xl font-heading font-bold text-primary mb-2">
+                <CardContent className="p-5 sm:p-6 text-center">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-primary mb-2">
                     {stat.number}
                   </div>
                   <div className="text-sm lg:text-base text-muted-foreground font-medium">

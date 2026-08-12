@@ -77,19 +77,19 @@ export function Services() {
   ];
 
   return (
-    <section className="py-16 lg:py-24 bg-background" id="services">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <section className="py-14 sm:py-16 lg:py-24 bg-background" id="services">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-5xl font-heading font-semibold text-foreground mb-4">
+          <h2 className="text-3xl lg:text-5xl font-heading font-semibold leading-tight text-foreground mb-4">
             Our Services
           </h2>
-          <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
             Comprehensive flooring solutions for residential and commercial
             properties throughout Milwaukee Metro.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {services.map((service, index) => {
             const Icon = service.icon;
             return (

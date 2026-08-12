@@ -18,7 +18,7 @@ function CompareSlider({ before, after }: { before: string; after: string }) {
   
   return (
     <div
-      className="relative aspect-[4/3] overflow-hidden select-none cursor-ew-resize"
+      className="relative aspect-[4/3] overflow-hidden select-none cursor-ew-resize touch-none"
       onMouseDown={() => setIsDragging(true)}
       onMouseUp={() => setIsDragging(false)}
       onMouseLeave={() => setIsDragging(false)}
@@ -30,13 +30,13 @@ function CompareSlider({ before, after }: { before: string; after: string }) {
     >
       <img
         src={after}
-        alt="After"
-        className="absolute inset-0 w-full h-full object-cover"
+        alt="After flooring installation"
+        className="absolute inset-0 h-full w-full object-cover"
       />
       <img
         src={before}
-        alt="Before"
-        className="absolute inset-0 w-full h-full object-cover"
+        alt="Before flooring installation"
+        className="absolute inset-0 h-full w-full object-cover"
         style={{ 
           clipPath: `polygon(0 0, ${sliderPosition}% 0, ${sliderPosition}% 100%, 0 100%)`
         }}
@@ -45,14 +45,14 @@ function CompareSlider({ before, after }: { before: string; after: string }) {
         className="absolute top-0 bottom-0 w-1 bg-ring cursor-ew-resize"
         style={{ left: `${sliderPosition}%` }}
       >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-ring border-4 border-white shadow-lg flex items-center justify-center">
-          <MoveHorizontal className="w-6 h-6 text-white" />
+        <div className="absolute top-1/2 left-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-ring shadow-lg sm:h-12 sm:w-12">
+          <MoveHorizontal className="h-5 w-5 text-white sm:h-6 sm:w-6" />
         </div>
       </div>
-      <div className="absolute bottom-6 left-6 bg-black/70 text-white px-4 py-2 rounded-md text-base font-medium">
+      <div className="absolute bottom-3 left-3 rounded-md bg-black/70 px-3 py-1.5 text-sm font-medium text-white sm:bottom-6 sm:left-6 sm:px-4 sm:py-2 sm:text-base">
         Before
       </div>
-      <div className="absolute bottom-6 right-6 bg-black/70 text-white px-4 py-2 rounded-md text-base font-medium">
+      <div className="absolute bottom-3 right-3 rounded-md bg-black/70 px-3 py-1.5 text-sm font-medium text-white sm:bottom-6 sm:right-6 sm:px-4 sm:py-2 sm:text-base">
         After
       </div>
     </div>
@@ -62,12 +62,12 @@ function CompareSlider({ before, after }: { before: string; after: string }) {
 export function BeforeAfter() {
   return (
     <section className="py-16 lg:py-24 bg-muted/30" id="before-after">
-      <div className="max-w-5xl mx-auto px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-5xl font-heading font-semibold text-foreground mb-4">
             Before & After
           </h2>
-          <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
             See the dramatic transformation we achieved for this Milwaukee area bathroom.
             Drag the slider to compare.
           </p>

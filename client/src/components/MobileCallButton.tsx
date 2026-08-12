@@ -1,23 +1,15 @@
 import { Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export function MobileCallButton() {
   return (
-    <div className="fixed bottom-6 right-6 z-50 md:hidden" data-testid="mobile-call-container">
-      <Button
-        asChild
-        size="icon"
-        className="bg-ring text-white border-ring shadow-xl rounded-full"
-      >
-        <a 
-          href="tel:+14142751889" 
-          aria-label="Call us" 
-          className="flex items-center justify-center"
-          data-testid="button-mobile-call"
-        >
-          <Phone className="w-6 h-6" />
-        </a>
-      </Button>
-    </div>
+    <a
+      href="tel:+14142751889"
+      aria-label="Call P&E Premium Flooring"
+      className="fixed bottom-4 inset-x-4 z-50 box-border inline-flex h-14 max-w-[calc(100vw-2rem)] items-center justify-center gap-2 rounded-full bg-ring px-4 text-center text-base font-heading font-semibold text-white shadow-xl md:hidden"
+      data-testid="button-mobile-call"
+    >
+      <Phone className="h-6 w-6 flex-shrink-0" />
+      <span className="truncate">Call for Free Estimate</span>
+    </a>
   );
 }
